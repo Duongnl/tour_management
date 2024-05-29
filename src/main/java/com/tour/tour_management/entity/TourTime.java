@@ -30,17 +30,17 @@ public class TourTime {
     Date visa_expire;
     int status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "tour_id", nullable = false, referencedColumnName = "tour_id")
     @JsonBackReference
     Tour tour;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "departure_airline_id", nullable = false, referencedColumnName = "airline_id")
     @JsonBackReference
     Airline departure_airline;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "return_airline_id", nullable = false, referencedColumnName = "airline_id")
     @JsonBackReference
     Airline return_airline;

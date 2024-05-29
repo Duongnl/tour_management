@@ -34,7 +34,7 @@ public class Account {
     @JsonBackReference
     Employee employee;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name =  "role_id", nullable = false, referencedColumnName = "role_id")
     @JsonBackReference
     Role role;
