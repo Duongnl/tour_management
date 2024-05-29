@@ -31,7 +31,7 @@ public class Tour {
     int price;
     int status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false, referencedColumnName = "category_id")
     @JsonBackReference
     Category category;

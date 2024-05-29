@@ -28,17 +28,17 @@ public class Reserve {
     LocalDateTime time;
     int status;
 
-    @ManyToOne(fetch =FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false, referencedColumnName = "employee_id")
     @JsonManagedReference
     Employee employee;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "tour_id", nullable = false, referencedColumnName = "tour_id")
     @JsonManagedReference
     Tour tour;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false, referencedColumnName = "customer_id")
     @JsonManagedReference
     Customer customer;

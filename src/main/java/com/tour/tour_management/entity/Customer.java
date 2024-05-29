@@ -35,7 +35,7 @@ public class Customer {
     int status;
 
 //    chính
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name ="customer_rel_id" , nullable = true, referencedColumnName = "customer_id")
     @JsonBackReference
     Customer customer;
