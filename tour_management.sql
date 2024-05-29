@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 27, 2024 lúc 10:40 AM
+-- Thời gian đã tạo: Th5 28, 2024 lúc 10:28 PM
 -- Phiên bản máy phục vụ: 10.4.28-MariaDB
 -- Phiên bản PHP: 8.1.17
 
@@ -34,7 +34,7 @@ CREATE TABLE `account` (
   `email` varchar(255) NOT NULL,
   `phone_number` int(11) DEFAULT NULL,
   `time` datetime NOT NULL,
-  `roles` varchar(255) NOT NULL,
+  `role_id` varchar(255) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -110,6 +110,18 @@ CREATE TABLE `employee` (
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `permission`
+--
+
+CREATE TABLE `permission` (
+  `permission_id` varchar(255) NOT NULL,
+  `permission_name` varchar(255) NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `reserve`
 --
 
@@ -123,6 +135,29 @@ CREATE TABLE `reserve` (
   `pay` int(11) NOT NULL,
   `time` datetime NOT NULL,
   `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `role`
+--
+
+CREATE TABLE `role` (
+  `role_id` varchar(255) NOT NULL,
+  `role_name` varchar(255) NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `role_permission`
+--
+
+CREATE TABLE `role_permission` (
+  `role_id` varchar(255) NOT NULL,
+  `permission_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -180,7 +215,8 @@ ALTER TABLE `account`
   ADD PRIMARY KEY (`account_id`),
   ADD UNIQUE KEY `account_id` (`account_id`),
   ADD UNIQUE KEY `account_name` (`account_name`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `account_fk6` (`role_id`);
 
 --
 -- Chỉ mục cho bảng `airline`
@@ -214,6 +250,13 @@ ALTER TABLE `employee`
   ADD KEY `employee_fk1` (`account_id`);
 
 --
+-- Chỉ mục cho bảng `permission`
+--
+ALTER TABLE `permission`
+  ADD PRIMARY KEY (`permission_id`),
+  ADD UNIQUE KEY `permission_id` (`permission_id`);
+
+--
 -- Chỉ mục cho bảng `reserve`
 --
 ALTER TABLE `reserve`
@@ -222,6 +265,20 @@ ALTER TABLE `reserve`
   ADD KEY `reserve_fk1` (`customer_id`),
   ADD KEY `reserve_fk2` (`tour_id`),
   ADD KEY `reserve_fk3` (`employee_id`);
+
+--
+-- Chỉ mục cho bảng `role`
+--
+ALTER TABLE `role`
+  ADD PRIMARY KEY (`role_id`),
+  ADD UNIQUE KEY `role_id` (`role_id`);
+
+--
+-- Chỉ mục cho bảng `role_permission`
+--
+ALTER TABLE `role_permission`
+  ADD PRIMARY KEY (`role_id`,`permission_id`),
+  ADD KEY `role_permission_fk1` (`permission_id`);
 
 --
 -- Chỉ mục cho bảng `tour`
@@ -246,6 +303,12 @@ ALTER TABLE `tour_time`
 --
 
 --
+-- Các ràng buộc cho bảng `account`
+--
+ALTER TABLE `account`
+  ADD CONSTRAINT `account_fk6` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`);
+
+--
 -- Các ràng buộc cho bảng `customer`
 --
 ALTER TABLE `customer`
@@ -264,6 +327,13 @@ ALTER TABLE `reserve`
   ADD CONSTRAINT `reserve_fk1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
   ADD CONSTRAINT `reserve_fk2` FOREIGN KEY (`tour_id`) REFERENCES `tour` (`tour_id`),
   ADD CONSTRAINT `reserve_fk3` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`);
+
+--
+-- Các ràng buộc cho bảng `role_permission`
+--
+ALTER TABLE `role_permission`
+  ADD CONSTRAINT `role_permission_fk0` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`),
+  ADD CONSTRAINT `role_permission_fk1` FOREIGN KEY (`permission_id`) REFERENCES `permission` (`permission_id`);
 
 --
 -- Các ràng buộc cho bảng `tour`

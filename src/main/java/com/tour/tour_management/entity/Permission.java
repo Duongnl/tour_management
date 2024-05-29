@@ -1,11 +1,12 @@
 package com.tour.tour_management.entity;
 
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 //tao get set
@@ -17,26 +18,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Account {
-
+public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    String account_id;
-    String account_name;
-    String password;
-    String email;
-    int phone_number;
-    LocalDateTime time;
-    String roles;
+    String permission_id;
+    String permission_name;
     int status;
 
-    @OneToOne(mappedBy = "account")
+    @ManyToMany(mappedBy = "permissions")
     @JsonBackReference
-    Employee employee;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name =  "role_id", nullable = false, referencedColumnName = "role_id")
-    @JsonBackReference
-    Role role;
-
+    Set<Role> roles;
 }
+
+
