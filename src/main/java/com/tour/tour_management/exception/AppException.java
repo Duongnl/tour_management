@@ -15,7 +15,7 @@ public class AppException extends  RuntimeException{
         return errorCode;
     }
 
-    public void setErrorCode(ErrorCode errorCode) {
-        this.errorCode = errorCode;
+    public void setErrorCode(TourErrorCode tourErrorCode) {
+        this.errorCode = tourErrorCode;
     }
 }

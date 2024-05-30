@@ -1,12 +1,13 @@
 package com.tour.tour_management.service;
 
 import com.tour.tour_management.dto.request.TourRequest;
-import com.tour.tour_management.dto.response.CategoryResponse;
+import com.tour.tour_management.dto.request.TourUpdateRequest;
 import com.tour.tour_management.dto.response.TourResponse;
 import com.tour.tour_management.entity.Category;
 import com.tour.tour_management.entity.Tour;
 import com.tour.tour_management.exception.AppException;
-import com.tour.tour_management.exception.ErrorCode;
+import com.tour.tour_management.exception.CategoryErrorCode;
+import com.tour.tour_management.exception.TourErrorCode;
 import com.tour.tour_management.mapper.TourMapper;
 import com.tour.tour_management.repository.CategoryRepository;
 import com.tour.tour_management.repository.TourRepository;
@@ -39,25 +40,25 @@ public class TourService {
 
     public TourResponse getTour(String tour_id){
         return tourMapper.toTourResponse(tourRepository.findById(tour_id)
-                .orElseThrow(() -> new AppException(ErrorCode.TOUR_NOT_FOUND)));
+                .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND)));
     }
 
     public TourResponse createTour(TourRequest tourRequest) {
         Category category = categoryRepository.findById(tourRequest.getCategory_id())
-                .orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(()-> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
         Tour tour = tourMapper.toTour(tourRequest);
         tour.setCategory(category);
         return  tourMapper.toTourResponse(tourRepository.save(tour));
     }
 
-    public TourResponse updateTour(String tour_id, TourRequest tourRequest){
+    public TourResponse updateTour(String tour_id, TourUpdateRequest tourUpdateRequest){
         Tour tour = tourRepository.findById(tour_id)
-                .orElseThrow(() -> new AppException(ErrorCode.TOUR_NOT_FOUND));
+                .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
 
-        Category category = categoryRepository.findById(tourRequest.getCategory_id())
-                .orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        Category category = categoryRepository.findById(tourUpdateRequest.getCategory_id())
+                .orElseThrow(()-> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
 
-        tourMapper.updateTour(tour, tourRequest);
+        tourMapper.updateTour(tour, tourUpdateRequest);
         tour.setCategory(category);
 
         return tourMapper.toTourResponse(tourRepository.save(tour));
@@ -65,7 +66,7 @@ public class TourService {
 
     public void deleteTour(String tour_id){
         Tour tour = tourRepository.findById(tour_id)
-                .orElseThrow(()-> new AppException(ErrorCode.TOUR_NOT_FOUND));
+                .orElseThrow(()-> new AppException(TourErrorCode.TOUR_NOT_FOUND));
         tourRepository.delete(tour);
     }
 
