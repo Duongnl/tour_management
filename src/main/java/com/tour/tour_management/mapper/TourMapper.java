@@ -12,9 +12,11 @@ import org.mapstruct.factory.Mappers;
 public interface TourMapper {
 
      @Mapping(source = "category.category_id", target = "category_id")
+     @Mapping(source = "category.category_name", target = "category_name")
      TourResponse toTourResponse (Tour tour) ;
 
      Tour toTour (TourRequest tourRequest);
 
+     void updateTour(@MappingTarget Tour tour, TourRequest tourRequest);
 //     void createTour(@MappingTarget  Tour tour, TourRequest tourRequest);
 }

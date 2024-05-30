@@ -29,6 +29,13 @@ public class TourController {
                .build();
     }
 
+    @GetMapping("/{tour_id}")
+    public ApiResponse<TourResponse> getTour(@PathVariable String tour_id){
+        return ApiResponse.<TourResponse>builder()
+                .result(tourService.getTour(tour_id))
+                .build();
+    }
+
     @PostMapping
     public ApiResponse<TourResponse> createTour (@RequestBody TourRequest tourRequest) {
        return ApiResponse.<TourResponse>builder()
@@ -36,5 +43,21 @@ public class TourController {
                .build();
 
     }
+
+    @PutMapping("/{tour_id}")
+    public ApiResponse<TourResponse> updateTour (@PathVariable String tour_id, @RequestBody TourRequest tourRequest) {
+        return ApiResponse.<TourResponse>builder()
+                .result(tourService.updateTour(tour_id ,tourRequest))
+                .build();
+    }
+
+    @DeleteMapping("/{tour_id}")
+    public ApiResponse<String> deleteTour (@PathVariable String tour_id){
+        tourService.deleteTour(tour_id);
+        return ApiResponse.<String>builder()
+                .build();
+    }
+
+
 
 }
