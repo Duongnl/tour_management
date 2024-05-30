@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // tiep nhan exception va xu ly chung
@@ -19,26 +20,33 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(errorCode.getHttpStatusCode())
                 .body(ApiResponse.builder()
-                        .code(errorCode.getCode())
-                        .message(errorCode.getMessage())
+                        .code("FAIL")
+                        .result(ApiResponse.builder()
+                                .code(errorCode.getCode())
+                                .message(errorCode.getMessage())
+                                .build())
                         .build());
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception){
 
+        List<ApiResponse> apiResponseList = new ArrayList<>();
         exception.getBindingResult().getAllErrors().forEach(exp -> {
-            System.out.println( exp.getDefaultMessage());
+            ErrorCode errorCode = handlingErrorCode(exp.getDefaultMessage());
+            apiResponseList.add(ApiResponse.builder()
+                    .code(errorCode.getCode())
+                    .message(errorCode.getMessage())
+                    .build());
         });
 
         //        Lấy ra mã enum của ErrorCode enumKey = TOUR_NAME_NOT_NULL
-        String enumKey = exception.getFieldError().getDefaultMessage();
+//        String enumKey = exception.getFieldError().getDefaultMessage();
 //        lay ra doi tuong enum errorCode bang mã enum
-        ErrorCode errorCode = handlingErrorCode(enumKey);
 
         return  ResponseEntity.badRequest().body(ApiResponse.builder()
-                .code(errorCode.getCode())
-                .message(errorCode.getMessage())
+                .code("FAIL")
+                .result(apiResponseList)
                 .build()
         );
     }
