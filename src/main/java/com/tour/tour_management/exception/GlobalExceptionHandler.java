@@ -3,6 +3,7 @@ package com.tour.tour_management.exception;
 
 import com.tour.tour_management.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,7 +29,24 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    ResponseEntity<ApiResponse> handlingHttpMessage(HttpMessageNotReadableException exception){
+        return  ResponseEntity.badRequest().body(ApiResponse.builder()
+                .code("FAIL")
+                        .result(ApiResponse.builder()
+                            .code(TourErrorCode.NUMBER_INVALID.getCode())
+                            .message(TourErrorCode.NUMBER_INVALID.getMessage())
+                            .build()
+                        )
+                .build()
+        );
+    }
+
+
+
+
+//    DefaultHandlerExceptionResolver
+    @ExceptionHandler( value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception){
 
         List<ApiResponse> apiResponseList = new ArrayList<>();
@@ -39,10 +57,6 @@ public class GlobalExceptionHandler {
                     .message(errorCode.getMessage())
                     .build());
         });
-
-        //        Lấy ra mã enum của ErrorCode enumKey = TOUR_NAME_NOT_NULL
-//        String enumKey = exception.getFieldError().getDefaultMessage();
-//        lay ra doi tuong enum errorCode bang mã enum
 
         return  ResponseEntity.badRequest().body(ApiResponse.builder()
                 .code("FAIL")
