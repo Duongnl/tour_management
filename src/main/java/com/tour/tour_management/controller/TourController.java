@@ -1,11 +1,13 @@
 package com.tour.tour_management.controller;
 
 import com.tour.tour_management.dto.request.TourRequest;
+import com.tour.tour_management.dto.request.TourUpdateRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
 import com.tour.tour_management.dto.response.TourResponse;
 import com.tour.tour_management.entity.Tour;
 import com.tour.tour_management.mapper.TourMapper;
 import com.tour.tour_management.service.TourService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,6 +31,13 @@ public class TourController {
                .build();
     }
 
+    @GetMapping("/{tour_id}")
+    public ApiResponse<TourResponse> getTour(@PathVariable String tour_id){
+        return ApiResponse.<TourResponse>builder()
+                .result(tourService.getTour(tour_id))
+                .build();
+    }
+
     @PostMapping
     public ApiResponse<TourResponse> createTour (@RequestBody TourRequest tourRequest) {
        return ApiResponse.<TourResponse>builder()
@@ -36,5 +45,21 @@ public class TourController {
                .build();
 
     }
+
+    @PutMapping("/{tour_id}")
+    public ApiResponse<TourResponse> updateTour (@PathVariable String tour_id, @RequestBody @Valid TourUpdateRequest tourUpdateRequest) {
+        return ApiResponse.<TourResponse>builder()
+                .result(tourService.updateTour(tour_id ,tourUpdateRequest))
+                .build();
+    }
+
+    @DeleteMapping("/{tour_id}")
+    public ApiResponse<String> deleteTour (@PathVariable String tour_id){
+        tourService.deleteTour(tour_id);
+        return ApiResponse.<String>builder()
+                .build();
+    }
+
+
 
 }

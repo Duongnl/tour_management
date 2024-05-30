@@ -1,7 +1,7 @@
 package com.tour.tour_management.dto.response;
 
 
-import com.tour.tour_management.entity.Tour;
+import com.tour.tour_management.mapper.CategoryMapper;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,6 +20,8 @@ public class CategoryResponse {
     String category_id;
     String category_name;
     int status;
-    Set<Tour> tours;
+    Set<CategoryMapper.TourConvert> tours;
 
 }
+
+

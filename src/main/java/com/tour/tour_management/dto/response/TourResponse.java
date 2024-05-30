@@ -17,7 +17,7 @@ import java.util.Set;
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TourResponse {
-
+    String tour_id;
     String tour_name;
     String tour_detail;
     int quantity;
@@ -27,6 +27,7 @@ public class TourResponse {
     int price;
     int status;
     String category_id;
+    String category_name;
 
 //    Category category;
 
