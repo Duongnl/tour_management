@@ -21,8 +21,9 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(errorCode.getHttpStatusCode())
                 .body(ApiResponse.builder()
-                        .code("FAIL")
+                        .status("FAIL")
                         .result(ApiResponse.builder()
+                                .status(null)
                                 .code(errorCode.getCode())
                                 .message(errorCode.getMessage())
                                 .build())
@@ -32,8 +33,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     ResponseEntity<ApiResponse> handlingHttpMessage(HttpMessageNotReadableException exception){
         return  ResponseEntity.badRequest().body(ApiResponse.builder()
-                .code("FAIL")
+                .status("FAIL")
                         .result(ApiResponse.builder()
+                                .status(null)
                             .code(TourErrorCode.NUMBER_INVALID.getCode())
                             .message(TourErrorCode.NUMBER_INVALID.getMessage())
                             .build()
@@ -53,13 +55,14 @@ public class GlobalExceptionHandler {
         exception.getBindingResult().getAllErrors().forEach(exp -> {
             ErrorCode errorCode = handlingErrorCode(exp.getDefaultMessage());
             apiResponseList.add(ApiResponse.builder()
+                    .status(null)
                     .code(errorCode.getCode())
                     .message(errorCode.getMessage())
                     .build());
         });
 
         return  ResponseEntity.badRequest().body(ApiResponse.builder()
-                .code("FAIL")
+                .status("FAIL")
                 .result(apiResponseList)
                 .build()
         );
