@@ -48,6 +48,7 @@ public class TourService {
                 .orElseThrow(()-> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
         Tour tour = tourMapper.toTour(tourRequest);
         tour.setCategory(category);
+        tour.setStatus(1);
         return  tourMapper.toTourResponse(tourRepository.save(tour));
     }
 

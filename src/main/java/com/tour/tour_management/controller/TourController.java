@@ -39,7 +39,7 @@ public class TourController {
     }
 
     @PostMapping
-    public ApiResponse<TourResponse> createTour (@RequestBody TourRequest tourRequest) {
+    public ApiResponse<TourResponse> createTour (@RequestBody @Valid TourRequest tourRequest) {
        return ApiResponse.<TourResponse>builder()
                .result(tourService.createTour(tourRequest))
                .build();
