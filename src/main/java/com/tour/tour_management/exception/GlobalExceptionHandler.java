@@ -17,29 +17,32 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handlingAppException (AppException appException){
+        List<ApiResponse> apiResponseList = new ArrayList<>();
         ErrorCode errorCode = appException.getErrorCode();
-
+        apiResponseList.add(ApiResponse.builder()
+                .status(null)
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build());
         return ResponseEntity.status(errorCode.getHttpStatusCode())
                 .body(ApiResponse.builder()
                         .status("FAIL")
-                        .result(ApiResponse.builder()
-                                .status(null)
-                                .code(errorCode.getCode())
-                                .message(errorCode.getMessage())
-                                .build())
+                        .result(apiResponseList)
                         .build());
     }
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     ResponseEntity<ApiResponse> handlingHttpMessage(HttpMessageNotReadableException exception){
+        List<ApiResponse> apiResponseList = new ArrayList<>();
+        apiResponseList.add(ApiResponse.builder()
+                .status(null)
+                .code(TourErrorCode.NUMBER_INVALID.getCode())
+                .message(TourErrorCode.NUMBER_INVALID.getMessage())
+                .build());
+
         return  ResponseEntity.badRequest().body(ApiResponse.builder()
                 .status("FAIL")
-                        .result(ApiResponse.builder()
-                                .status(null)
-                            .code(TourErrorCode.NUMBER_INVALID.getCode())
-                            .message(TourErrorCode.NUMBER_INVALID.getMessage())
-                            .build()
-                        )
+                        .result(apiResponseList)
                 .build()
         );
     }

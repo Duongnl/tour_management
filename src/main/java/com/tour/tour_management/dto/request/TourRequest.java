@@ -1,6 +1,9 @@
 package com.tour.tour_management.dto.request;
 
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,14 +17,20 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TourRequest {
 
+    @NotBlank(message = "TOUR_NAME_NOT_BLANK")
     String tour_name;
+
     String tour_detail;
+
+    @Min(value = 0, message = "TOUR_QUANTITY_MIN_INVALID")
+    @Max(value = 2100000000, message = "TOUR_QUANTITY_MAX_INVALID")
     int quantity;
-    int quantity_sell;
-    int quantity_reserve;
-    int quantity_left;
+
+    @Min(value = 0, message = "TOUR_QUANTITY_MIN_INVALID")
+    @Max(value = 2100000000, message = "TOUR_QUANTITY_MAX_INVALID")
     int price;
-    int status;
+
+    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
     String category_id;
 
 }
