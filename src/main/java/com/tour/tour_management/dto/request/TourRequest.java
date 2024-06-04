@@ -22,13 +22,13 @@ public class TourRequest {
 
     String tour_detail;
 
-    @Min(value = 0, message = "TOUR_QUANTITY_MIN_INVALID")
-    @Max(value = 2100000000, message = "TOUR_QUANTITY_MAX_INVALID")
-    int quantity;
-
-    @Min(value = 0, message = "TOUR_QUANTITY_MIN_INVALID")
-    @Max(value = 2100000000, message = "TOUR_QUANTITY_MAX_INVALID")
-    int price;
+//    @Min(value = 0, message = "TOUR_QUANTITY_MIN_INVALID")
+//    @Max(value = 2100000000, message = "TOUR_QUANTITY_MAX_INVALID")
+//    int quantity;
+//
+//    @Min(value = 0, message = "TOUR_QUANTITY_MIN_INVALID")
+//    @Max(value = 2100000000, message = "TOUR_QUANTITY_MAX_INVALID")
+//    int price;
 
     @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
     String category_id;

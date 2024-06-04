@@ -2,12 +2,14 @@ package com.tour.tour_management.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 //tao get set
@@ -28,6 +30,12 @@ public class TourTime {
     LocalDateTime departure_time;
     LocalDateTime return_time;
     Date visa_expire;
+    int quantity;
+    int quantity_reserve;
+    int quantity_sell;
+    int quantity_left;
+    int price_min;
+    int commission;
     int status;
 
     @ManyToOne
@@ -45,7 +53,9 @@ public class TourTime {
     @JsonBackReference
     Airline return_airline;
 
-
+    @OneToMany(mappedBy = "tourTime", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    Set<Reserve> reserves;
 
 
 

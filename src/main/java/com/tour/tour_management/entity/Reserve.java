@@ -24,9 +24,12 @@ public class Reserve {
     String reserve_id;
     String note;
     int price;
+    int price_min;
+    int commission;
     int pay;
     LocalDateTime time;
     int status;
+
 
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false, referencedColumnName = "employee_id")
@@ -34,9 +37,9 @@ public class Reserve {
     Employee employee;
 
     @ManyToOne
-    @JoinColumn(name = "tour_id", nullable = false, referencedColumnName = "tour_id")
+    @JoinColumn(name = "tour_time_id", nullable = false, referencedColumnName = "tour_time_id")
     @JsonManagedReference
-    Tour tour;
+    TourTime tourTime;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false, referencedColumnName = "customer_id")

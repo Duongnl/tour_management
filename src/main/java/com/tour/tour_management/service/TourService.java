@@ -54,10 +54,10 @@ public class TourService {
 
     public TourResponse updateTour(String tour_id, TourUpdateRequest tourUpdateRequest){
 
-        int quantity = tourUpdateRequest.getQuantity_sell() + tourUpdateRequest.getQuantity_reserve();
-        if (tourUpdateRequest.getQuantity() < quantity){
-            throw  new AppException(TourErrorCode.QUANTITY_ERROR);
-        }
+//        int quantity = tourUpdateRequest.getQuantity_sell() + tourUpdateRequest.getQuantity_reserve();
+//        if (tourUpdateRequest.getQuantity() < quantity){
+//            throw  new AppException(TourErrorCode.QUANTITY_ERROR);
+//        }
 
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
@@ -67,9 +67,9 @@ public class TourService {
 
         tourMapper.updateTour(tour, tourUpdateRequest);
         tour.setCategory(category);
-        tour.setQuantity_left(
-                tour.getQuantity() - (tour.getQuantity_sell() + tour.getQuantity_reserve())
-        );
+//        tour.setQuantity_left(
+//                tour.getQuantity() - (tour.getQuantity_sell() + tour.getQuantity_reserve())
+//        );
 
         return tourMapper.toTourResponse(tourRepository.save(tour));
     }

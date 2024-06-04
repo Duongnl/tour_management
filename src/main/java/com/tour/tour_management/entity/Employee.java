@@ -37,5 +37,8 @@ public class Employee {
     @JoinColumn(name = "account_id", referencedColumnName = "account_id")
     Account account;
 
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    Set<History> histories;
+
 
 }
