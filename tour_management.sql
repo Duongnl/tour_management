@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 28, 2024 lúc 10:28 PM
+-- Thời gian đã tạo: Th6 04, 2024 lúc 04:37 PM
 -- Phiên bản máy phục vụ: 10.4.28-MariaDB
 -- Phiên bản PHP: 8.1.17
 
@@ -35,7 +35,8 @@ CREATE TABLE `account` (
   `phone_number` int(11) DEFAULT NULL,
   `time` datetime NOT NULL,
   `role_id` varchar(255) NOT NULL,
-  `status` int(11) NOT NULL
+  `status` int(11) NOT NULL,
+  `roles` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -70,7 +71,7 @@ CREATE TABLE `category` (
 --
 
 INSERT INTO `category` (`category_id`, `category_name`, `status`) VALUES
-('1', 'Du lịch Singapore', 1);
+('1', 'Du lịch Trung Quốc', 1);
 
 -- --------------------------------------------------------
 
@@ -103,7 +104,21 @@ CREATE TABLE `employee` (
   `account_id` varchar(255) NOT NULL,
   `employee_name` varchar(255) NOT NULL,
   `birthday` datetime(6) DEFAULT NULL,
-  `commission` int(11) DEFAULT NULL,
+  `status` int(11) NOT NULL,
+  `commission` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `history`
+--
+
+CREATE TABLE `history` (
+  `history_id` varchar(255) NOT NULL,
+  `employee_id` varchar(255) NOT NULL,
+  `history_detail` varchar(255) NOT NULL,
+  `time` datetime NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -128,12 +143,14 @@ CREATE TABLE `permission` (
 CREATE TABLE `reserve` (
   `reserve_id` varchar(255) NOT NULL,
   `customer_id` varchar(255) NOT NULL,
-  `tour_id` varchar(255) NOT NULL,
+  `tour_time_id` varchar(255) NOT NULL,
   `employee_id` varchar(255) NOT NULL,
   `note` varchar(255) DEFAULT NULL,
-  `price` int(11) NOT NULL,
+  `price_min` int(11) NOT NULL,
+  `price` int(11) DEFAULT NULL,
   `pay` int(11) NOT NULL,
   `time` datetime NOT NULL,
+  `commission` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -157,6 +174,7 @@ CREATE TABLE `role` (
 
 CREATE TABLE `role_permission` (
   `role_id` varchar(255) NOT NULL,
+  `permission` varchar(255) NOT NULL,
   `permission_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -171,11 +189,6 @@ CREATE TABLE `tour` (
   `category_id` varchar(255) DEFAULT NULL,
   `tour_name` varchar(255) NOT NULL,
   `tour_detail` varchar(255) DEFAULT NULL,
-  `quantity` int(11) NOT NULL,
-  `quantity_sell` int(11) NOT NULL,
-  `quantity_reserve` int(11) NOT NULL,
-  `quantity_left` int(11) NOT NULL,
-  `price` int(11) DEFAULT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -183,8 +196,8 @@ CREATE TABLE `tour` (
 -- Đang đổ dữ liệu cho bảng `tour`
 --
 
-INSERT INTO `tour` (`tour_id`, `category_id`, `tour_name`, `tour_detail`, `quantity`, `quantity_sell`, `quantity_reserve`, `quantity_left`, `price`, `status`) VALUES
-('1', '1', 'Du lịch Singapore', 'Vào mùa xuân', 50, 0, 0, 50, 15000000, 1);
+INSERT INTO `tour` (`tour_id`, `category_id`, `tour_name`, `tour_detail`, `status`) VALUES
+('2b925418-341f-45ce-86fb-07c2e3c4929c', '1', 'Du lịch , tour Trung Quốc', 'Du lịch mùa hè, có visa, mới nhất', 1);
 
 -- --------------------------------------------------------
 
@@ -200,6 +213,12 @@ CREATE TABLE `tour_time` (
   `departure_airline_id` varchar(255) DEFAULT NULL,
   `return_time` datetime NOT NULL,
   `return_airline_id` varchar(255) DEFAULT NULL,
+  `quantity` int(11) NOT NULL,
+  `quantity_reserve` int(11) NOT NULL,
+  `quantity_sell` int(11) NOT NULL,
+  `quantity_left` int(11) NOT NULL,
+  `price_min` int(11) NOT NULL,
+  `commission` int(11) NOT NULL,
   `visa_expire` datetime(6) DEFAULT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -250,6 +269,14 @@ ALTER TABLE `employee`
   ADD KEY `employee_fk1` (`account_id`);
 
 --
+-- Chỉ mục cho bảng `history`
+--
+ALTER TABLE `history`
+  ADD PRIMARY KEY (`history_id`),
+  ADD UNIQUE KEY `history_id` (`history_id`),
+  ADD KEY `history_fk1` (`employee_id`);
+
+--
 -- Chỉ mục cho bảng `permission`
 --
 ALTER TABLE `permission`
@@ -263,7 +290,7 @@ ALTER TABLE `reserve`
   ADD PRIMARY KEY (`reserve_id`),
   ADD UNIQUE KEY `reserve_id` (`reserve_id`),
   ADD KEY `reserve_fk1` (`customer_id`),
-  ADD KEY `reserve_fk2` (`tour_id`),
+  ADD KEY `reserve_fk2` (`tour_time_id`),
   ADD KEY `reserve_fk3` (`employee_id`);
 
 --
@@ -277,8 +304,9 @@ ALTER TABLE `role`
 -- Chỉ mục cho bảng `role_permission`
 --
 ALTER TABLE `role_permission`
-  ADD PRIMARY KEY (`role_id`,`permission_id`),
-  ADD KEY `role_permission_fk1` (`permission_id`);
+  ADD PRIMARY KEY (`role_id`,`permission`),
+  ADD KEY `role_permission_fk1` (`permission`),
+  ADD KEY `FKf8yllw1ecvwqy3ehyxawqa1qp` (`permission_id`);
 
 --
 -- Chỉ mục cho bảng `tour`
@@ -294,9 +322,9 @@ ALTER TABLE `tour`
 ALTER TABLE `tour_time`
   ADD PRIMARY KEY (`tour_time_id`),
   ADD UNIQUE KEY `tour_time_id` (`tour_time_id`),
-  ADD KEY `tour_time_fk0` (`tour_id`),
-  ADD KEY `tour_time_fk3` (`departure_airline_id`),
-  ADD KEY `tour_time_fk5` (`return_airline_id`);
+  ADD KEY `tour_time_fk1` (`tour_id`),
+  ADD KEY `tour_time_fk4` (`departure_airline_id`),
+  ADD KEY `tour_time_fk6` (`return_airline_id`);
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -321,19 +349,26 @@ ALTER TABLE `employee`
   ADD CONSTRAINT `employee_fk1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`);
 
 --
+-- Các ràng buộc cho bảng `history`
+--
+ALTER TABLE `history`
+  ADD CONSTRAINT `history_fk1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`);
+
+--
 -- Các ràng buộc cho bảng `reserve`
 --
 ALTER TABLE `reserve`
   ADD CONSTRAINT `reserve_fk1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
-  ADD CONSTRAINT `reserve_fk2` FOREIGN KEY (`tour_id`) REFERENCES `tour` (`tour_id`),
+  ADD CONSTRAINT `reserve_fk2` FOREIGN KEY (`tour_time_id`) REFERENCES `tour_time` (`tour_time_id`),
   ADD CONSTRAINT `reserve_fk3` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`);
 
 --
 -- Các ràng buộc cho bảng `role_permission`
 --
 ALTER TABLE `role_permission`
+  ADD CONSTRAINT `FKf8yllw1ecvwqy3ehyxawqa1qp` FOREIGN KEY (`permission_id`) REFERENCES `permission` (`permission_id`),
   ADD CONSTRAINT `role_permission_fk0` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`),
-  ADD CONSTRAINT `role_permission_fk1` FOREIGN KEY (`permission_id`) REFERENCES `permission` (`permission_id`);
+  ADD CONSTRAINT `role_permission_fk1` FOREIGN KEY (`permission`) REFERENCES `permission` (`permission_id`);
 
 --
 -- Các ràng buộc cho bảng `tour`
@@ -345,9 +380,9 @@ ALTER TABLE `tour`
 -- Các ràng buộc cho bảng `tour_time`
 --
 ALTER TABLE `tour_time`
-  ADD CONSTRAINT `tour_time_fk0` FOREIGN KEY (`tour_id`) REFERENCES `tour` (`tour_id`),
-  ADD CONSTRAINT `tour_time_fk3` FOREIGN KEY (`departure_airline_id`) REFERENCES `airline` (`airline_id`),
-  ADD CONSTRAINT `tour_time_fk5` FOREIGN KEY (`return_airline_id`) REFERENCES `airline` (`airline_id`);
+  ADD CONSTRAINT `tour_time_fk1` FOREIGN KEY (`tour_id`) REFERENCES `tour` (`tour_id`),
+  ADD CONSTRAINT `tour_time_fk4` FOREIGN KEY (`departure_airline_id`) REFERENCES `airline` (`airline_id`),
+  ADD CONSTRAINT `tour_time_fk6` FOREIGN KEY (`return_airline_id`) REFERENCES `airline` (`airline_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

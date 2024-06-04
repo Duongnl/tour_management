@@ -20,16 +20,7 @@ public class TourResponse {
     String tour_id;
     String tour_name;
     String tour_detail;
-    int quantity;
-    int quantity_sell;
-    int quantity_reserve;
-    int quantity_left;
-    int price;
     int status;
     String category_id;
     String category_name;
-
-//    Category category;
-
-//    Set<TourTime> tourTimes;
 }
