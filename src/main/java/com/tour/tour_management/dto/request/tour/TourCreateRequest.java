@@ -1,17 +1,10 @@
-package com.tour.tour_management.dto.request;
+package com.tour.tour_management.dto.request.tour;
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.tour.tour_management.entity.TourTime;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import com.tour.tour_management.dto.request.tourtime.TourTimeCreateRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
 import java.util.Set;
 
 // tao get set hashcode euqual,...
@@ -22,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TourRequest {
+public class TourCreateRequest {
 
 //    @NotBlank(message = "TOUR_NAME_NOT_BLANK")
     String tour_name;
@@ -40,6 +33,6 @@ public class TourRequest {
 //    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
     Integer category_id;
 
-    Set<TourTimeRequest> tourTimes;
+    Set<TourTimeCreateRequest> tourTimes;
 
 }

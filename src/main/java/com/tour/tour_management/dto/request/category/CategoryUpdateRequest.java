@@ -1,4 +1,5 @@
-package com.tour.tour_management.dto.request;
+package com.tour.tour_management.dto.request.category;
+
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -12,12 +13,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryRequest {
+public class CategoryUpdateRequest {
 
     @NotBlank(message = "CATEGORY_NAME_NOT_BLANK")
     String category_name;
     String category_detail;
-
-    int status;
-
+    @NotBlank(message = "CATEGORY_URL_NOT_BLANK")
+    String url;
 }

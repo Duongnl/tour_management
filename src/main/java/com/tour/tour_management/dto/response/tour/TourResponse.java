@@ -1,23 +1,22 @@
-package com.tour.tour_management.dto.request;
+package com.tour.tour_management.dto.response.tour;
 
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
-
 // tao get set hashcode euqual,...
 @Data
-// tao builder de tao mot doi tuong nhanh
+// tao builder
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class EmployeeRequest {
-    String employee_id;
-    String employee_name;
-    Date birthday;
-    int commission;
+public class TourResponse {
+    String tour_id;
+    String tour_name;
+    String tour_detail;
     int status;
+//    String category_id;
+//    String category_name;
 }

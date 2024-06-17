@@ -1,5 +1,6 @@
-package com.tour.tour_management.dto.request;
+package com.tour.tour_management.dto.request.tourtime;
 
+import com.tour.tour_management.dto.request.airline.AirlineUpdateRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

@@ -1,14 +1,10 @@
 package com.tour.tour_management.controller;
 
-import com.tour.tour_management.dto.request.TourRequest;
-import com.tour.tour_management.dto.request.TourUpdateRequest;
+import com.tour.tour_management.dto.request.tour.TourCreateRequest;
+import com.tour.tour_management.dto.request.tour.TourUpdateRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
-import com.tour.tour_management.dto.response.GetTourResponse;
-import com.tour.tour_management.dto.response.TourResponse;
-import com.tour.tour_management.entity.Category;
-import com.tour.tour_management.entity.Tour;
-import com.tour.tour_management.exception.AppException;
-import com.tour.tour_management.exception.CategoryErrorCode;
+import com.tour.tour_management.dto.response.tour.GetTourResponse;
+import com.tour.tour_management.dto.response.tour.TourResponse;
 import com.tour.tour_management.mapper.TourMapper;
 import com.tour.tour_management.repository.CategoryRepository;
 import com.tour.tour_management.service.TourService;
@@ -56,9 +52,9 @@ public class TourController {
 
 
     @PostMapping
-    public ApiResponse<TourResponse> createTour (@RequestBody @Valid TourRequest tourRequest) {
+    public ApiResponse<TourResponse> createTour (@RequestBody @Valid TourCreateRequest tourCreateRequest) {
        return ApiResponse.<TourResponse>builder()
-               .result(tourService.createTour(tourRequest))
+               .result(tourService.createTour(tourCreateRequest))
                .build();
 
     }

@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum CategoryErrorCode implements ErrorCode {
     CATEGORY_NOT_FOUND("CATEGORY_1", "Category not found", HttpStatus.NOT_FOUND),
-    CATEGORY_NAME_NOT_BLANK ("CATEGORY_2","Category name not blank", HttpStatus.BAD_REQUEST)
+    CATEGORY_NAME_NOT_BLANK ("CATEGORY_2","Category name not blank", HttpStatus.BAD_REQUEST),
+    CATEGORY_URL_NOT_BLANK ("CATEGORY_3","Category url not blank", HttpStatus.BAD_REQUEST)
 
     ;
 

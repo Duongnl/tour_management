@@ -1,7 +1,7 @@
 package com.tour.tour_management.controller;
 
 
-import com.tour.tour_management.dto.request.AirlineRequest;
+import com.tour.tour_management.dto.request.airline.AirlineCreateRequest;
 import com.tour.tour_management.dto.response.AirlineResponse;
 import com.tour.tour_management.dto.response.ApiResponse;
 import com.tour.tour_management.service.AirlineService;
@@ -29,17 +29,17 @@ public class AirlineController {
     }
 
     @PostMapping
-    public ApiResponse<AirlineResponse> createAirline(@RequestBody @Valid AirlineRequest airlineRequest){
+    public ApiResponse<AirlineResponse> createAirline(@RequestBody @Valid AirlineCreateRequest airlineCreateRequest){
         return ApiResponse.<AirlineResponse>builder()
-                .result(airlineService.createAirline(airlineRequest))
+                .result(airlineService.createAirline(airlineCreateRequest))
                 .build();
     }
 
     @PutMapping("/{airline_id}")
     public ApiResponse<AirlineResponse> updateAirline(@PathVariable Integer airline_id,
-                                                  @RequestBody @Valid AirlineRequest airlineRequest){
+                                                  @RequestBody @Valid AirlineCreateRequest airlineCreateRequest){
         return ApiResponse.<AirlineResponse>builder()
-                .result(airlineService.updateAirline(airline_id, airlineRequest))
+                .result(airlineService.updateAirline(airline_id, airlineCreateRequest))
                 .build();
     }
 

@@ -1,11 +1,11 @@
 package com.tour.tour_management.mapper;
 
-import com.tour.tour_management.dto.request.CategoryRequest;
-import com.tour.tour_management.dto.response.CategoryResponse;
-import com.tour.tour_management.dto.response.GetCategoryResponse;
+import com.tour.tour_management.dto.request.category.CategoryCreateRequest;
+import com.tour.tour_management.dto.request.category.CategoryUpdateRequest;
+import com.tour.tour_management.dto.response.category.CategoryResponse;
+import com.tour.tour_management.dto.response.category.GetCategoryResponse;
 import com.tour.tour_management.entity.Category;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 // khoi tao mapper
@@ -19,9 +19,9 @@ public interface CategoryMapper {
     CategoryResponse toCategoryResponse(Category category);
 
 //    mapping category request to category entity
-    Category toCategory(CategoryRequest categoryRequest );
+    Category toCategory(CategoryCreateRequest categoryCreateRequest);
 
-    void updateCategory(@MappingTarget Category category, CategoryRequest categoryRequest);
+    void updateCategory(@MappingTarget Category category, CategoryUpdateRequest categoryUpdateRequest);
 
 //    @Named("convert")
 //    default Set<TourConvert> convert(Set<Tour> tours){

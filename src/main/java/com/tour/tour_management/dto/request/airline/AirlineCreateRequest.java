@@ -1,9 +1,8 @@
-package com.tour.tour_management.dto.request;
+package com.tour.tour_management.dto.request.airline;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 // tao get set hashcode euqual,...
@@ -14,9 +13,8 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AirlineUpdateRequest {
+public class AirlineCreateRequest {
 //    @NotBlank (message = "AIRLINE_NAME_NOT_BLANK")
-    String airline_id;
     String airline_name;
 
     String airline_detail;

@@ -1,9 +1,9 @@
 package com.tour.tour_management.service;
 
-import com.tour.tour_management.dto.request.TourRequest;
-import com.tour.tour_management.dto.request.TourUpdateRequest;
-import com.tour.tour_management.dto.response.GetTourResponse;
-import com.tour.tour_management.dto.response.TourResponse;
+import com.tour.tour_management.dto.request.tour.TourCreateRequest;
+import com.tour.tour_management.dto.request.tour.TourUpdateRequest;
+import com.tour.tour_management.dto.response.tour.GetTourResponse;
+import com.tour.tour_management.dto.response.tour.TourResponse;
 import com.tour.tour_management.entity.Category;
 import com.tour.tour_management.entity.Tour;
 import com.tour.tour_management.exception.AppException;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 // thay the autowired va tu tao private final,
 @RequiredArgsConstructor
@@ -60,10 +59,11 @@ public class TourService {
 
 
     @Transactional
-    public TourResponse createTour(TourRequest tourRequest) {
-        Category category = categoryRepository.findById(tourRequest.getCategory_id())
+    public TourResponse createTour(TourCreateRequest tourCreateRequest) {
+        Category category = categoryRepository.findById(tourCreateRequest.getCategory_id())
                 .orElseThrow(()-> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
-        Tour tour = tourMapper.toTour(tourRequest);
+        Tour tour = tourMapper.toTour(tourCreateRequest);
+
         tour.setCategory(category);
         tour.setStatus(1);
 
