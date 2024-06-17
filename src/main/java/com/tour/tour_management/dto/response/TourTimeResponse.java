@@ -1,6 +1,5 @@
-package com.tour.tour_management.dto.request;
+package com.tour.tour_management.dto.response;
 
-import com.tour.tour_management.dto.response.AirlineResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,14 +8,14 @@ import java.util.Date;
 
 // tao get set hashcode euqual,...
 @Data
-// tao builder de tao mot doi tuong nhanh
+// tao builder
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TourTimeRequest {
-    String tour_id;
+public class TourTimeResponse {
+    String tour_time_id;
     String time_name;
     Date departure_time;
     Date return_time;
@@ -27,7 +26,7 @@ public class TourTimeRequest {
     int quantity_left;
     int price_min;
     int commission;
-    AirlineRequest departureAirline;
-    AirlineRequest returnAirline;
+    AirlineResponse departureAirline;
+    AirlineResponse returnAirline;
 
 }

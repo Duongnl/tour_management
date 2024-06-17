@@ -20,9 +20,11 @@ import java.util.Set;
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String category_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer category_id;
     String category_name;
+    String category_detail;
+    String url;
     int status;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)

@@ -1,8 +1,10 @@
 package com.tour.tour_management.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDateTime;
 
 // tao get set hashcode euqual,...
 @Data
@@ -12,12 +14,13 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryRequest {
+public class AccountRequest {
 
-    @NotBlank(message = "CATEGORY_NAME_NOT_BLANK")
-    String category_name;
-    String category_detail;
+    String account_name;
+    String password;
+    String email;
+    int phone_number;
+    String role_id;
 
-    int status;
 
 }

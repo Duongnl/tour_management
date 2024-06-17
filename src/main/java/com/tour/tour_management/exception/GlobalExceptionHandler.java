@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorCode.getHttpStatusCode())
                 .body(ApiResponse.builder()
                         .status("FAIL")
-                        .result(apiResponseList)
+                        .error(apiResponseList)
                         .build());
     }
 
@@ -36,13 +36,13 @@ public class GlobalExceptionHandler {
         List<ApiResponse> apiResponseList = new ArrayList<>();
         apiResponseList.add(ApiResponse.builder()
                 .status(null)
-                .code(TourErrorCode.NUMBER_INVALID.getCode())
-                .message(TourErrorCode.NUMBER_INVALID.getMessage())
+                .code(TourTimeErrorCode.NUMBER_INVALID.getCode())
+                .message(TourTimeErrorCode.NUMBER_INVALID.getMessage())
                 .build());
 
         return  ResponseEntity.badRequest().body(ApiResponse.builder()
                 .status("FAIL")
-                        .result(apiResponseList)
+                        .error(apiResponseList)
                 .build()
         );
     }
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
 
         return  ResponseEntity.badRequest().body(ApiResponse.builder()
                 .status("FAIL")
-                .result(apiResponseList)
+                .error(apiResponseList)
                 .build()
         );
     }
@@ -79,6 +79,8 @@ public class GlobalExceptionHandler {
                 return TourErrorCode.valueOf(enumKey);
             case "CATEGORY" :
                 return CategoryErrorCode.valueOf(enumKey);
+            case "AIRLINE" :
+                return  AirlineErrorCode.valueOf(enumKey);
             default:
                 return null;
         }

@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 //tao get set
@@ -22,12 +23,12 @@ public class History {
     @GeneratedValue(strategy = GenerationType.UUID)
     String history_id;
     String history_detail;
-    LocalDateTime time;
+    ZonedDateTime time;
     int status;
 
     @ManyToOne
-    @JoinColumn(name = "employee_id", nullable = false, referencedColumnName = "employee_id")
+    @JoinColumn(name = "account_id", nullable = false, referencedColumnName = "account_id")
     @JsonBackReference
-    Employee employee;
+    Account account;
 
 }

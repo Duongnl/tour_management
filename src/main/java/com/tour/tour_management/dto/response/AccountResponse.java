@@ -1,12 +1,10 @@
 package com.tour.tour_management.dto.response;
 
 
-import com.tour.tour_management.entity.Category;
-import com.tour.tour_management.entity.TourTime;
+import com.tour.tour_management.entity.Employee;
+import com.tour.tour_management.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
 
 // tao get set hashcode euqual,...
 @Data
@@ -16,11 +14,12 @@ import java.util.Set;
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TourResponse {
-    String tour_id;
-    String tour_name;
-    String tour_detail;
-    int status;
-//    String category_id;
-//    String category_name;
+public class AccountResponse {
+
+    String account_name;
+    String email;
+    int phone_number;
+    Role role;
+    Employee employee;
+
 }

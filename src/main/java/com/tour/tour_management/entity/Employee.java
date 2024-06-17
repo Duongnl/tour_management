@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
@@ -22,11 +23,15 @@ import java.util.Set;
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String employee_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer employee_id;
     String employee_name;
+    @Column(name = "birthday", columnDefinition = "date")
     Date birthday;
-    int commission;
+    @Column(name = "total_commission", columnDefinition = "bigint")
+    BigInteger total_commission;
+    @Column(name = "total_sales", columnDefinition = "bigint")
+    BigInteger total_sales;
     int status;
 
     @OneToMany(mappedBy = "employee",  cascade = CascadeType.ALL)
@@ -37,8 +42,7 @@ public class Employee {
     @JoinColumn(name = "account_id", referencedColumnName = "account_id")
     Account account;
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
-    Set<History> histories;
+
 
 
 }

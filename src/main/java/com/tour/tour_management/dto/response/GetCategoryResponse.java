@@ -1,9 +1,10 @@
 package com.tour.tour_management.dto.response;
 
-
-import com.tour.tour_management.mapper.CategoryMapper;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import com.tour.tour_management.entity.Tour;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
@@ -14,14 +15,11 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryResponse {
+public class GetCategoryResponse {
 
     String category_id;
     String category_name;
-    String category_detail;
     int status;
-
+//    Set<CategoryMapper.TourConvert> tours;
+    Set<TourResponse> tours;
 }
-
-

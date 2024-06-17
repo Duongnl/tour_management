@@ -5,6 +5,8 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 // tao get set hashcode euqual,...
 @Data
 // tao builder de tao mot doi tuong nhanh
@@ -15,9 +17,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TourUpdateRequest {
 
-    @NotBlank(message = "TOUR_NAME_NOT_BLANK")
-    String tour_name;
+//    @NotBlank(message = "TOUR_NAME_NOT_BLANK")
 
+    String tour_name;
     String tour_detail;
 
 //    @Min(value = 0, message = "TOUR_QUANTITY_MIN_INVALID")
@@ -36,8 +38,10 @@ public class TourUpdateRequest {
 //    @Max(value = 2100000000, message = "TOUR_PRICE_MAX_INVALID")
 //    int price;
 
-    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
-    String category_id;
+//    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
+    Integer category_id;
+
+    Set<TourTimeUpdateRequest> tourTimes;
 
 }
 
