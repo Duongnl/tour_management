@@ -1,11 +1,18 @@
 package com.tour.tour_management.dto.request;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.tour.tour_management.entity.TourTime;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
+import java.util.Set;
 
 // tao get set hashcode euqual,...
 @Data
@@ -17,7 +24,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TourRequest {
 
-    @NotBlank(message = "TOUR_NAME_NOT_BLANK")
+//    @NotBlank(message = "TOUR_NAME_NOT_BLANK")
     String tour_name;
 
     String tour_detail;
@@ -30,7 +37,9 @@ public class TourRequest {
 //    @Max(value = 2100000000, message = "TOUR_QUANTITY_MAX_INVALID")
 //    int price;
 
-    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
-    String category_id;
+//    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
+    Integer category_id;
+
+    Set<TourTimeRequest> tourTimes;
 
 }

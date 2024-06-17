@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+
 // tao get set hashcode euqual,...
 @Data
 // tao builder de tao mot doi tuong nhanh
@@ -12,12 +15,14 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryRequest {
+public class AirlineRequest {
+//    @NotBlank (message = "AIRLINE_NAME_NOT_BLANK")
+    String airline_name;
 
-    @NotBlank(message = "CATEGORY_NAME_NOT_BLANK")
-    String category_name;
-    String category_detail;
+    String airline_detail;
 
-    int status;
+//    @NotBlank(message = "AIRLINE_DEPARTURE_NOT_BLANK")
+ZonedDateTime departure_time;
+//    @NotBlank(message = "AIRLINE_RETURN_NOT_BLANK")
 
 }

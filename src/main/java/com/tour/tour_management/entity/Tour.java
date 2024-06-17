@@ -1,7 +1,6 @@
 package com.tour.tour_management.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,15 +19,17 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Tour {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String tour_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer tour_id;
     String tour_name;
     String tour_detail;
+    String url;
     int status;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false, referencedColumnName = "category_id")
-    @JsonBackReference
+//    @JsonBackReference
+    @JsonIgnoreProperties("tours")
     Category category;
 
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL)

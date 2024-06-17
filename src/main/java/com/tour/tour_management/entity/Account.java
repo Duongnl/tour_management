@@ -6,6 +6,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Set;
 
 @Entity
 //tao get set
@@ -25,9 +27,8 @@ public class Account {
     String account_name;
     String password;
     String email;
-    int phone_number;
-    LocalDateTime time;
-    String roles;
+    String phone_number;
+    ZonedDateTime time;
     int status;
 
     @OneToOne(mappedBy = "account")
@@ -39,4 +40,6 @@ public class Account {
     @JsonBackReference
     Role role;
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    Set<History> histories;
 }

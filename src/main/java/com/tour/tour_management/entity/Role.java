@@ -21,8 +21,8 @@ import java.util.Set;
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String role_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer role_id;
     String role_name;
     int status;
 

@@ -1,27 +1,23 @@
-package com.tour.tour_management.dto.response;
+package com.tour.tour_management.dto.request;
 
 
-import com.tour.tour_management.mapper.CategoryMapper;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Set;
+import java.util.Date;
 
 // tao get set hashcode euqual,...
 @Data
-// tao builder
+// tao builder de tao mot doi tuong nhanh
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryResponse {
-
-    String category_id;
-    String category_name;
-    String category_detail;
+public class EmployeeRequest {
+    String employee_id;
+    String employee_name;
+    Date birthday;
+    int commission;
     int status;
-
 }
-
-

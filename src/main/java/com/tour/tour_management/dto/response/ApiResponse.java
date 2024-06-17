@@ -21,4 +21,5 @@ public class ApiResponse <T> {
     String code;
     String message;
     T result;
+    T error;
 }

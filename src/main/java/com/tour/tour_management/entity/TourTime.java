@@ -2,12 +2,12 @@ package com.tour.tour_management.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -24,11 +24,14 @@ import java.util.Set;
 public class TourTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String tour_time_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer tour_time_id;
     String time_name;
-    LocalDateTime departure_time;
-    LocalDateTime return_time;
+    @Column(name = "departure_time", columnDefinition = "date")
+    Date departure_time;
+    @Column(name = "return_time", columnDefinition = "date")
+    Date return_time;
+    @Column(name = "visa_expire", columnDefinition = "date")
     Date visa_expire;
     int quantity;
     int quantity_reserve;
@@ -45,13 +48,15 @@ public class TourTime {
 
     @ManyToOne
     @JoinColumn(name = "departure_airline_id", nullable = false, referencedColumnName = "airline_id")
-    @JsonBackReference
-    Airline departure_airline;
+    @JsonIgnoreProperties("departureTourTimes")
+//    @JsonBackReference
+    Airline departureAirline;
 
     @ManyToOne
     @JoinColumn(name = "return_airline_id", nullable = false, referencedColumnName = "airline_id")
-    @JsonBackReference
-    Airline return_airline;
+//    @JsonBackReference
+    @JsonIgnoreProperties("returnTourTimes")
+    Airline returnAirline;
 
     @OneToMany(mappedBy = "tourTime", cascade = CascadeType.ALL)
     @JsonManagedReference

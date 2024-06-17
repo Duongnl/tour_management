@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 //tao get set
@@ -27,7 +28,7 @@ public class Reserve {
     int price_min;
     int commission;
     int pay;
-    LocalDateTime time;
+    ZonedDateTime time;
     int status;
 
 

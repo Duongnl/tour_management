@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Entity
@@ -22,19 +23,18 @@ import java.util.Set;
 public class Airline {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String airline_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer airline_id;
     String airline_name;
     String airline_detail;
-    LocalDateTime departure_time;
-    LocalDateTime return_time;
+    ZonedDateTime departure_time;
     int status;
 
-    @OneToMany(mappedBy = "departure_airline", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "departureAirline", cascade = CascadeType.ALL)
     @JsonManagedReference
     Set<TourTime> departureTourTimes;
 
-    @OneToMany(mappedBy = "return_airline", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "returnAirline", cascade = CascadeType.ALL)
     @JsonManagedReference
     Set<TourTime> returnTourTimes;
 
