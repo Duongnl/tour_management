@@ -1,7 +1,7 @@
-package com.tour.tour_management.dto.request;
+package com.tour.tour_management.dto.request.tour;
 
 
-import jakarta.validation.constraints.*;
+import com.tour.tour_management.dto.request.tourtime.TourTimeUpdateRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

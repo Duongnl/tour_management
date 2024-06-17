@@ -1,9 +1,10 @@
 package com.tour.tour_management.controller;
 
-import com.tour.tour_management.dto.request.CategoryRequest;
+import com.tour.tour_management.dto.request.category.CategoryCreateRequest;
+import com.tour.tour_management.dto.request.category.CategoryUpdateRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
-import com.tour.tour_management.dto.response.CategoryResponse;
-import com.tour.tour_management.dto.response.GetCategoryResponse;
+import com.tour.tour_management.dto.response.category.CategoryResponse;
+import com.tour.tour_management.dto.response.category.GetCategoryResponse;
 import com.tour.tour_management.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -37,39 +38,39 @@ public class CategoryController {
             .build();
     }
 
-    @GetMapping("/{category_id}")
-    public  ApiResponse<GetCategoryResponse> getCategory(@PathVariable Integer category_id) {
+    @GetMapping("/{category_url}")
+    public  ApiResponse<GetCategoryResponse> getCategory(@PathVariable String category_url) {
         return ApiResponse.<GetCategoryResponse>builder()
-                .result( categoryService.getCategory(category_id))
+                .result( categoryService.getCategory(category_url))
                 .build();
     }
 
     @PostMapping
-    public ApiResponse<CategoryResponse> createCategory (@RequestBody @Valid CategoryRequest categoryRequest) {
+    public ApiResponse<CategoryResponse> createCategory (@RequestBody @Valid CategoryCreateRequest categoryCreateRequest) {
         return ApiResponse.<CategoryResponse>builder()
-                .result(categoryService.createCategory(categoryRequest))
+                .result(categoryService.createCategory(categoryCreateRequest))
                 .build();
     }
 
-    @PutMapping("/{category_id}")
-    public ApiResponse<CategoryResponse> updateCategory (@PathVariable Integer category_id
-            ,@RequestBody @Valid CategoryRequest categoryRequest){
+    @PutMapping("/{category_url}")
+    public ApiResponse<CategoryResponse> updateCategory (@PathVariable String category_url
+            ,@RequestBody @Valid CategoryUpdateRequest categoryUpdateRequest){
         return ApiResponse.<CategoryResponse>builder()
-                .result(categoryService.updateCategory(category_id,categoryRequest))
+                .result(categoryService.updateCategory(category_url,categoryUpdateRequest))
                 .build();
     }
 
-    @PutMapping("/undoCategory/{category_id}")
-    public ApiResponse<CategoryResponse> undoCategory (@PathVariable Integer category_id){
+    @PutMapping("/undoCategory/{category_url}")
+    public ApiResponse<CategoryResponse> undoCategory (@PathVariable String category_url){
         return ApiResponse.<CategoryResponse>builder()
-                .result(categoryService.undoCategory(category_id))
+                .result(categoryService.undoCategory(category_url))
                 .build();
     }
 
-    @DeleteMapping("/{category_id}")
-    public ApiResponse deleteCategory (@PathVariable Integer category_id) {
+    @DeleteMapping("/{category_url}")
+    public ApiResponse deleteCategory (@PathVariable String category_url) {
         return ApiResponse.builder()
-                .result( categoryService.deleteCategory(category_id))
+                .result( categoryService.deleteCategory(category_url))
                 .build();
     }
 

@@ -1,6 +1,6 @@
-package com.tour.tour_management.dto.response;
+package com.tour.tour_management.dto.response.category;
 
-import com.tour.tour_management.entity.Tour;
+import com.tour.tour_management.dto.response.tour.TourResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +19,12 @@ public class GetCategoryResponse {
 
     String category_id;
     String category_name;
+    String url;
     int status;
 //    Set<CategoryMapper.TourConvert> tours;
     Set<TourResponse> tours;
+
+    public String getUrl () {
+        return url + '-' +category_id;
+    }
 }
