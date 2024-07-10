@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 @Getter
-public enum TourTimeErrorCode {
+public enum TourTimeErrorCode implements ErrorCode {
     QUANTITY_ERROR ("TIME_1", "Quantity must be greater than total reserve and sale", HttpStatus.BAD_REQUEST),
     TIME_QUANTITY_MIN_INVALID("TIME_2", "Quantity  must be at least 0", HttpStatus.BAD_REQUEST),
     TIME_QUANTITY_SELL_MIN_INVALID("TIME_3", "Quantity sell  must be at least 0", HttpStatus.BAD_REQUEST),

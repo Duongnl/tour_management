@@ -19,6 +19,7 @@ public class GetCategoryResponse {
 
     String category_id;
     String category_name;
+    String category_detail;
     String url;
     int status;
 //    Set<CategoryMapper.TourConvert> tours;
