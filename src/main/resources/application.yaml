@@ -1,7 +1,7 @@
 server:
   post: 8080
   servlet:
-    context-path: /tour_management
+    context-path: /api
 
 spring:
   datasource:
@@ -12,3 +12,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+jwt:
+  signerKey: "EKZzTfJgGwjEQWfbi4LvuZQQXWNhS8EmukmPGDan2zydj6UE4aHS8MV7oBiIPKwO"

@@ -81,6 +81,10 @@ public class GlobalExceptionHandler {
                 return CategoryErrorCode.valueOf(enumKey);
             case "AIRLINE" :
                 return  AirlineErrorCode.valueOf(enumKey);
+            case "ROLE" :
+                return  RoleErrorCode.valueOf(enumKey);
+            case "ACCOUNT" :
+                return  AccountErrorCode.valueOf(enumKey);
             default:
                 return null;
         }
