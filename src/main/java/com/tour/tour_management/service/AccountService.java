@@ -24,6 +24,7 @@ import com.tour.tour_management.repository.RoleRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -82,6 +83,15 @@ public class AccountService {
         return accountMapper.toGetAccountResponse(accountRepository.save(account));
     }
 
+    //    lay thong tin cua user dang dang nhap
+    public GetAccountResponse getMyInfo () {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        Account account =   accountRepository.findByAccountName(name).orElseThrow(
+                () -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND));
+        return accountMapper.toGetAccountResponse(account);
+    }
 
 
 

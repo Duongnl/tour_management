@@ -33,6 +33,13 @@ public class AccountController {
                 .build();
     }
 
+    @GetMapping("/myInfo")
+    ApiResponse<GetAccountResponse> getMyInfo () {
+        return ApiResponse.<GetAccountResponse>builder()
+                .result(accountService.getMyInfo())
+                .build();
+    }
+
     @PostMapping
     public ApiResponse<GetAccountResponse> createTour (@RequestBody AccountCreateRequest accountCreateRequest) {
         return ApiResponse.<GetAccountResponse>builder()
