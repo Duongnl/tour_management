@@ -79,6 +79,11 @@ public class AuthenticationService {
             throw new AppException(AccountErrorCode.UNAUTHENTICATED);
         } // neu password dung
         else  {
+
+            if (account.getStatus() != 1 ){
+                throw new AppException(AccountErrorCode.ACCOUNT_LOCKED);
+            }
+
             String token = generateToken(account.getAccount_name());
            return AuthenticationResponse.builder()
                    .token(token)

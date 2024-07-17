@@ -1,14 +1,10 @@
 package com.tour.tour_management.controller;
 
 
-import com.tour.tour_management.dto.request.account.AccountCreateRequest;
-import com.tour.tour_management.dto.request.airline.AirlineCreateRequest;
-import com.tour.tour_management.dto.request.tour.TourCreateRequest;
-import com.tour.tour_management.dto.response.AirlineResponse;
+import com.tour.tour_management.dto.request.account.AccountRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
 import com.tour.tour_management.dto.response.account.AccountResponse;
 import com.tour.tour_management.dto.response.account.GetAccountResponse;
-import com.tour.tour_management.dto.response.tour.TourResponse;
 import com.tour.tour_management.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -33,17 +29,40 @@ public class AccountController {
                 .build();
     }
 
-    @GetMapping("/myInfo")
+    @GetMapping("/my-info")
     ApiResponse<GetAccountResponse> getMyInfo () {
         return ApiResponse.<GetAccountResponse>builder()
                 .result(accountService.getMyInfo())
                 .build();
     }
 
-    @PostMapping
-    public ApiResponse<GetAccountResponse> createTour (@RequestBody AccountCreateRequest accountCreateRequest) {
+    @GetMapping("/{url}")
+    public ApiResponse<GetAccountResponse> getAccount (@PathVariable String url) {
         return ApiResponse.<GetAccountResponse>builder()
-                .result(accountService.createAccount(accountCreateRequest))
+                .result(accountService.getAccount(url))
+                .build();
+    }
+
+    @PostMapping
+    public ApiResponse<GetAccountResponse> createAccount (@RequestBody @Valid AccountRequest  accountRequest) {
+        return ApiResponse.<GetAccountResponse>builder()
+                .result(accountService.createAccount(accountRequest))
+                .build();
+    }
+
+    @PutMapping("/{url}")
+    public ApiResponse<GetAccountResponse> updateAccount (@RequestBody @Valid AccountRequest  accountRequest,@PathVariable String url) {
+        return ApiResponse.<GetAccountResponse>builder()
+                .result(accountService.updateAccount(url,accountRequest))
+                .build();
+    }
+
+
+
+    @PutMapping ("/change-status/{account_id}")
+    public  ApiResponse<GetAccountResponse> changeStatus(@PathVariable String account_id) {
+        return ApiResponse.<GetAccountResponse>builder()
+                .result(accountService.changeStatus(account_id))
                 .build();
     }
 

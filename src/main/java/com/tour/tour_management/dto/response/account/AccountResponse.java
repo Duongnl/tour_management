@@ -20,9 +20,9 @@ public class AccountResponse {
 
     String account_id;
     String account_name;
-    String email;
+    String employee_name;
     ZonedDateTime time;
     int status;
-    RoleResponse role;
+    String role_name;
 
 }

@@ -22,7 +22,6 @@ public class GetAccountResponse {
 
     String account_id;
     String account_name;
-    String password;
     String email;
     String phone_number;
     ZonedDateTime time;
