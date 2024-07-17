@@ -27,4 +27,16 @@ public class StringUtils {
         }
     }
 
+    public static String getUUIDFromUrl (String url) {
+        try {
+            String [] parts = url.split("-");
+            String uuid  =parts[parts.length-5]+ '-' + parts[parts.length-4] + '-' +
+                    parts[parts.length-3] + '-' + parts[parts.length-2] + '-' + parts[parts.length-1];
+
+            return uuid;
+        } catch (NumberFormatException e)  {
+            return "error";
+        }
+    }
+
 }

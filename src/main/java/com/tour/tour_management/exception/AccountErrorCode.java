@@ -19,7 +19,26 @@ public enum AccountErrorCode implements ErrorCode{
             "Password must contain at least one uppercase Latin character [A-Z]." +
             "Password must contain at least one special character like ! @ # & ( )." +
             "Password must contain a length of at least 8 characters and a maximum of 20 characters.", HttpStatus.BAD_REQUEST),
+    ACCOUNT_LOCKED ("ACCOUNT_6", "Account is locked ", HttpStatus.BAD_REQUEST),
+    ACCOUNT_EMAIL_INVALID ("ACCOUNT_7", "- local-part :" +
+            "uppercase and lowercase Latin letters A to Z and a to z." +
+            "digits 0 to 9." +
+            "Allow dot (.), underscore (_) and hyphen (-)." +
+            "dot (.) is not the first or last character." +
+            "dot (.) does not appear consecutively, e.g. mkyong..yong@example.com is not allowed.\n" +
+            "Max 64 characters." +
+            "- domain :" +
+            "uppercase and lowercase Latin letters A to Z and a to z." +
+            "digits 0 to 9." +
+            "hyphen (-) is not the first or last character." +
+            "dot (.) is not the first or last character." +
+            "dot (.) does not appear consecutively." +
+            "tld min 2 characters.", HttpStatus.BAD_REQUEST),
+    ACCOUNT_PHONE_NUMBER_INVALID("ACCOUNT_8", "Phone number is invalid", HttpStatus.BAD_REQUEST),
+
     ;
+
+
 
     private String code;
     private String message;
