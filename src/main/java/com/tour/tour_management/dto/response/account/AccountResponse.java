@@ -1,12 +1,13 @@
 package com.tour.tour_management.dto.response.account;
 
 
-import com.tour.tour_management.dto.response.RoleResponse;
-import com.tour.tour_management.dto.response.employee.EmployeeResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 // tao get set hashcode euqual,...
 @Data
@@ -21,8 +22,15 @@ public class AccountResponse {
     String account_id;
     String account_name;
     String employee_name;
-    ZonedDateTime time;
+    LocalDateTime time;
     int status;
     String role_name;
+
+    public String getTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedTime = time.format(formatter);
+        return formattedTime;
+    }
+
 
 }

@@ -1,6 +1,9 @@
 package com.tour.tour_management.service;
 import com.tour.tour_management.dto.request.account.AccountRequest;
+import com.tour.tour_management.dto.request.account.AccountUpdateRequest;
+import com.tour.tour_management.dto.request.account.EmployeeRequest;
 import com.tour.tour_management.dto.response.account.AccountResponse;
+import com.tour.tour_management.dto.response.account.EmployeeResponse;
 import com.tour.tour_management.dto.response.account.GetAccountResponse;
 import com.tour.tour_management.dto.response.tour.GetTourResponse;
 import com.tour.tour_management.entity.Account;
@@ -22,7 +25,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,12 +73,12 @@ public class AccountService {
         Account account = accountMapper.toAccount(accountRequest);
         account.setRole(role);
 
-//        ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
-        ZonedDateTime currentTimeInZone = ZonedDateTime.now();
-        account.setTime(currentTimeInZone);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        account.setTime(localDateTime);
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         account.setPassword(passwordEncoder.encode(account.getPassword()));
+
         account.setStatus(1);
 
         account.getEmployee().setStatus(1);
@@ -84,35 +89,54 @@ public class AccountService {
         return accountMapper.toGetAccountResponse(accountRepository.save(account));
     }
 
-
-    public GetAccountResponse updateAccount (String url, AccountRequest accountRequest) {
+    public GetAccountResponse updateEmployee (String url, EmployeeRequest employeeRequest) {
         Account account =  accountRepository.findById(StringUtils.getUUIDFromUrl(url)).orElseThrow(
                 () -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND));
 
+        accountMapper.updateEmployee(account.getEmployee(),employeeRequest);
 
-        if(accountRepository.existedAccountName(accountRequest.getAccount_name())){
+        employeeRepository.save(account.getEmployee());
+
+        return accountMapper.toGetAccountResponse( account );
+
+    }
+
+
+
+    public GetAccountResponse updateAccount (String url, AccountUpdateRequest accountUpdateRequest) {
+        Account account =  accountRepository.findById(StringUtils.getUUIDFromUrl(url)).orElseThrow(
+                () -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND));
+
+        System.out.println(accountUpdateRequest.getAccount_name());
+        System.out.println(account.getAccount_name());
+        if(accountRepository.existedAccountName(accountUpdateRequest.getAccount_name()) &&
+                !accountUpdateRequest.getAccount_name().equals(account.getAccount_name())){
             throw new AppException(AccountErrorCode.ACCOUNT_EXISTED);
         }
 
-        Role role = roleRepository.findById(accountRequest.getRole_id())
+        Role role = roleRepository.findById(accountUpdateRequest.getRole_id())
                 .orElseThrow(()-> new AppException(RoleErrorCode.ROLE_NOT_FOUND));
 
-        accountMapper.updateAccount(account,accountRequest);
+        accountMapper.updateAccount(account,accountUpdateRequest);
         account.setRole(role);
+
 
 //        ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
 //        ZonedDateTime currentTimeInZone = ZonedDateTime.now();
 //        account.setTime(currentTimeInZone);
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        account.setPassword(passwordEncoder.encode(account.getPassword()));
+        if (accountUpdateRequest.getPassword() != null) {
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+            account.setPassword(passwordEncoder.encode(accountUpdateRequest.getPassword()));
+        }
 
-        account.getEmployee().setAccount(account);
-
-        employeeRepository.save(account.getEmployee());
+//        account.getEmployee().setAccount(account);
+//
+//        employeeRepository.save(account.getEmployee());
 
         return accountMapper.toGetAccountResponse(accountRepository.save(account));
     }
+
 
 
     //    lay thong tin cua user dang dang nhap

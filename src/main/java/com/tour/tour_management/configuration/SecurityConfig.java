@@ -23,7 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity // phan quyen theo method
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS = {"/auth/token","/account"};
+    private final String[] PUBLIC_ENDPOINTS = {"/auth/token"};
 
     @Value("${jwt.signerKey}")
     private String singerKey;

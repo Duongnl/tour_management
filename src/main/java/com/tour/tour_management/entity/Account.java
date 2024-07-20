@@ -28,7 +28,7 @@ public class Account {
     String password;
     String email;
     String phone_number;
-    ZonedDateTime time;
+    LocalDateTime time;
     int status;
 
     @OneToOne(mappedBy = "account")

@@ -1,11 +1,11 @@
-package com.tour.tour_management.dto.response.employee;
+package com.tour.tour_management.dto.response.account;
 
 
-import jakarta.persistence.Column;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 // tao get set hashcode euqual,...
@@ -23,5 +23,13 @@ public class EmployeeResponse {
     BigInteger total_commission;
     BigInteger total_sales;
     int status;
+
+
+    public String getBirthday() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedBirthday = sdf.format(this.birthday);
+        return formattedBirthday;
+    }
+
 
 }
