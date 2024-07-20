@@ -1,4 +1,4 @@
-package com.tour.tour_management.dto.request.employee;
+package com.tour.tour_management.dto.request.account;
 
 
 import jakarta.validation.constraints.Pattern;

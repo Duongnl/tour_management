@@ -1,10 +1,13 @@
 package com.tour.tour_management.mapper;
 
 import com.tour.tour_management.dto.request.account.AccountRequest;
+import com.tour.tour_management.dto.request.account.AccountUpdateRequest;
+import com.tour.tour_management.dto.request.account.EmployeeRequest;
 import com.tour.tour_management.dto.request.tour.TourUpdateRequest;
 import com.tour.tour_management.dto.response.account.AccountResponse;
 import com.tour.tour_management.dto.response.account.GetAccountResponse;
 import com.tour.tour_management.entity.Account;
+import com.tour.tour_management.entity.Employee;
 import com.tour.tour_management.entity.Tour;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,5 +23,8 @@ public interface AccountMapper {
     @Mapping(source = "employee.employee_name", target = "employee_name")
     AccountResponse toAccountResponse (Account account);
 
-    void updateAccount (@MappingTarget Account account, AccountRequest accountRequest);
+    @Mapping(target = "password", ignore = true)
+    void updateAccount (@MappingTarget Account account, AccountUpdateRequest accountRequest);
+
+    void updateEmployee (@MappingTarget Employee employee, EmployeeRequest employeeRequest);
 }

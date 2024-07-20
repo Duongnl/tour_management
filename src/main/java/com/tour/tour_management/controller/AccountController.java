@@ -2,6 +2,8 @@ package com.tour.tour_management.controller;
 
 
 import com.tour.tour_management.dto.request.account.AccountRequest;
+import com.tour.tour_management.dto.request.account.AccountUpdateRequest;
+import com.tour.tour_management.dto.request.account.EmployeeRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
 import com.tour.tour_management.dto.response.account.AccountResponse;
 import com.tour.tour_management.dto.response.account.GetAccountResponse;
@@ -51,9 +53,16 @@ public class AccountController {
     }
 
     @PutMapping("/{url}")
-    public ApiResponse<GetAccountResponse> updateAccount (@RequestBody @Valid AccountRequest  accountRequest,@PathVariable String url) {
+    public ApiResponse<GetAccountResponse> updateAccount (@RequestBody @Valid AccountUpdateRequest accountUpdateRequest, @PathVariable String url) {
         return ApiResponse.<GetAccountResponse>builder()
-                .result(accountService.updateAccount(url,accountRequest))
+                .result(accountService.updateAccount(url,accountUpdateRequest))
+                .build();
+    }
+
+    @PutMapping("/employee/{url}")
+    public ApiResponse<GetAccountResponse> updateEmployee (@RequestBody @Valid EmployeeRequest employeeRequest, @PathVariable String url) {
+        return ApiResponse.<GetAccountResponse>builder()
+                .result(accountService.updateEmployee(url,employeeRequest))
                 .build();
     }
 
