@@ -1,16 +1,19 @@
 package com.tour.tour_management.service;
 
-import com.tour.tour_management.dto.request.TourRequest;
-import com.tour.tour_management.dto.request.TourUpdateRequest;
-import com.tour.tour_management.dto.response.TourResponse;
+import com.tour.tour_management.dto.request.tour.TourCreateRequest;
+import com.tour.tour_management.dto.request.tour.TourUpdateRequest;
+import com.tour.tour_management.dto.response.tour.GetTourResponse;
+import com.tour.tour_management.dto.response.tour.TourResponse;
 import com.tour.tour_management.entity.Category;
 import com.tour.tour_management.entity.Tour;
 import com.tour.tour_management.exception.AppException;
 import com.tour.tour_management.exception.CategoryErrorCode;
 import com.tour.tour_management.exception.TourErrorCode;
 import com.tour.tour_management.mapper.TourMapper;
+import com.tour.tour_management.repository.AirlineRepository;
 import com.tour.tour_management.repository.CategoryRepository;
 import com.tour.tour_management.repository.TourRepository;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -28,31 +31,56 @@ public class TourService {
     TourRepository tourRepository;
     CategoryRepository categoryRepository;
     TourMapper tourMapper;
+    AirlineRepository airlineRepository;
 
-    public List<TourResponse> getAll(){
+
+    public List<TourResponse> getTours(){
         List<Tour> tourList = tourRepository.findAll();
         List<TourResponse> tourResponseList = new ArrayList<>();
-        tourList.forEach( tour ->{tourResponseList.add(tourMapper.toTourResponse(tour));});
-
-        tourResponseList.forEach(tour1 -> System.out.println(tour1.getTour_name()));
+        tourList.forEach( tour ->{
+                tourResponseList.add(tourMapper.toTourResponse(tour));
+        });
         return tourResponseList;
     }
 
-    public TourResponse getTour(String tour_id){
-        return tourMapper.toTourResponse(tourRepository.findById(tour_id)
+    public List<TourResponse> getDeletedTours(){
+        List<Tour> tourList =  tourRepository.findByStatus(0);
+        List<TourResponse> tourResponseList = new ArrayList<>();
+        tourList.forEach( tour ->{
+                tourResponseList.add(tourMapper.toTourResponse(tour));
+        });
+        return tourResponseList;
+    }
+
+    public GetTourResponse getTour(int tour_id){
+        return tourMapper.toGetTourResponse(tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND)));
     }
 
-    public TourResponse createTour(TourRequest tourRequest) {
-        Category category = categoryRepository.findById(tourRequest.getCategory_id())
+
+    @Transactional
+    public TourResponse createTour(TourCreateRequest tourCreateRequest) {
+        Category category = categoryRepository.findById(tourCreateRequest.getCategory_id())
                 .orElseThrow(()-> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
-        Tour tour = tourMapper.toTour(tourRequest);
+        Tour tour = tourMapper.toTour(tourCreateRequest);
+
         tour.setCategory(category);
         tour.setStatus(1);
+
+        tour.getTourTimes().forEach(tourTime -> {
+            tourTime.setTour(tour);
+            tourTime.getDepartureAirline().setStatus(1);
+            tourTime.getReturnAirline().setStatus(1);
+            airlineRepository.save(tourTime.getDepartureAirline());
+            airlineRepository.save(tourTime.getReturnAirline());
+
+        });
+
+
         return  tourMapper.toTourResponse(tourRepository.save(tour));
     }
 
-    public TourResponse updateTour(String tour_id, TourUpdateRequest tourUpdateRequest){
+    public TourResponse updateTour(int tour_id, TourUpdateRequest tourUpdateRequest){
 
 //        int quantity = tourUpdateRequest.getQuantity_sell() + tourUpdateRequest.getQuantity_reserve();
 //        if (tourUpdateRequest.getQuantity() < quantity){
@@ -67,6 +95,15 @@ public class TourService {
 
         tourMapper.updateTour(tour, tourUpdateRequest);
         tour.setCategory(category);
+
+        tour.getTourTimes().forEach(tourTime -> {
+            tourTime.setTour(tour);
+            tourTime.getDepartureAirline().setStatus(1);
+            tourTime.getReturnAirline().setStatus(1);
+            airlineRepository.save(tourTime.getDepartureAirline());
+            airlineRepository.save(tourTime.getReturnAirline());
+
+        });
 //        tour.setQuantity_left(
 //                tour.getQuantity() - (tour.getQuantity_sell() + tour.getQuantity_reserve())
 //        );
@@ -74,7 +111,7 @@ public class TourService {
         return tourMapper.toTourResponse(tourRepository.save(tour));
     }
 
-    public void deleteTour(String tour_id){
+    public void deleteTour(int tour_id){
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(()-> new AppException(TourErrorCode.TOUR_NOT_FOUND));
         tourRepository.delete(tour);

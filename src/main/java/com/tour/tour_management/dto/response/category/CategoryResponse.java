@@ -1,11 +1,8 @@
-package com.tour.tour_management.dto.response;
+package com.tour.tour_management.dto.response.category;
 
 
-import com.tour.tour_management.mapper.CategoryMapper;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
 
 // tao get set hashcode euqual,...
 @Data
@@ -17,11 +14,15 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryResponse {
 
-    String category_id;
+    Integer category_id;
     String category_name;
+    String category_detail;
+    String url;
     int status;
-    Set<CategoryMapper.TourConvert> tours;
 
+    public String getUrl () {
+        return url + '-' +category_id;
+    }
 }
 
 

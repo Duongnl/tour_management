@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th6 04, 2024 lúc 04:37 PM
--- Phiên bản máy phục vụ: 10.4.28-MariaDB
--- Phiên bản PHP: 8.1.17
+-- Thời gian đã tạo: Th6 17, 2024 lúc 12:02 PM
+-- Phiên bản máy phục vụ: 10.4.32-MariaDB
+-- Phiên bản PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -32,11 +32,10 @@ CREATE TABLE `account` (
   `account_name` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `phone_number` int(11) DEFAULT NULL,
+  `phone_number` varchar(255) DEFAULT NULL,
   `time` datetime NOT NULL,
-  `role_id` varchar(255) NOT NULL,
-  `status` int(11) NOT NULL,
-  `roles` varchar(255) DEFAULT NULL
+  `role_id` int(11) NOT NULL,
+  `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -46,11 +45,10 @@ CREATE TABLE `account` (
 --
 
 CREATE TABLE `airline` (
-  `airline_id` varchar(255) NOT NULL,
+  `airline_id` int(11) NOT NULL,
   `airline_name` varchar(255) NOT NULL,
   `airline_detail` varchar(255) DEFAULT NULL,
   `departure_time` datetime DEFAULT NULL,
-  `return_time` datetime DEFAULT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -61,17 +59,12 @@ CREATE TABLE `airline` (
 --
 
 CREATE TABLE `category` (
-  `category_id` varchar(255) NOT NULL,
+  `category_id` int(11) NOT NULL,
   `category_name` varchar(255) NOT NULL,
+  `category_detail` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `category`
---
-
-INSERT INTO `category` (`category_id`, `category_name`, `status`) VALUES
-('1', 'Du lịch Trung Quốc', 1);
 
 -- --------------------------------------------------------
 
@@ -80,16 +73,17 @@ INSERT INTO `category` (`category_id`, `category_name`, `status`) VALUES
 --
 
 CREATE TABLE `customer` (
-  `customer_id` varchar(255) NOT NULL,
-  `customer_rel_id` varchar(255) DEFAULT NULL,
+  `customer_id` int(11) NOT NULL,
+  `customer_rel_id` int(11) DEFAULT NULL,
   `relationship_name` varchar(255) DEFAULT NULL,
   `customer_name` varchar(255) NOT NULL,
-  `sex` varchar(255) DEFAULT NULL,
-  `phone_number` int(11) NOT NULL,
+  `sex` int(11) DEFAULT NULL,
+  `phone_number` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
-  `birthday` datetime(6) DEFAULT NULL,
-  `visa_expire` datetime(6) DEFAULT NULL,
+  `birthday` date DEFAULT NULL,
+  `visa_expire` date DEFAULT NULL,
+  `time` datetime NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -100,12 +94,13 @@ CREATE TABLE `customer` (
 --
 
 CREATE TABLE `employee` (
-  `employee_id` varchar(255) NOT NULL,
+  `employee_id` int(11) NOT NULL,
   `account_id` varchar(255) NOT NULL,
   `employee_name` varchar(255) NOT NULL,
-  `birthday` datetime(6) DEFAULT NULL,
-  `status` int(11) NOT NULL,
-  `commission` int(11) NOT NULL
+  `birthday` date DEFAULT NULL,
+  `total_commission` bigint(20) DEFAULT NULL,
+  `total_sales` bigint(20) DEFAULT NULL,
+  `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -116,7 +111,7 @@ CREATE TABLE `employee` (
 
 CREATE TABLE `history` (
   `history_id` varchar(255) NOT NULL,
-  `employee_id` varchar(255) NOT NULL,
+  `account_id` varchar(255) NOT NULL,
   `history_detail` varchar(255) NOT NULL,
   `time` datetime NOT NULL,
   `status` int(11) NOT NULL
@@ -142,13 +137,13 @@ CREATE TABLE `permission` (
 
 CREATE TABLE `reserve` (
   `reserve_id` varchar(255) NOT NULL,
-  `customer_id` varchar(255) NOT NULL,
-  `tour_time_id` varchar(255) NOT NULL,
-  `employee_id` varchar(255) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `tour_time_id` int(11) NOT NULL,
+  `employee_id` int(11) NOT NULL,
   `note` varchar(255) DEFAULT NULL,
   `price_min` int(11) NOT NULL,
   `price` int(11) DEFAULT NULL,
-  `pay` int(11) NOT NULL,
+  `pay` int(11) DEFAULT NULL,
   `time` datetime NOT NULL,
   `commission` int(11) NOT NULL,
   `status` int(11) NOT NULL
@@ -161,7 +156,7 @@ CREATE TABLE `reserve` (
 --
 
 CREATE TABLE `role` (
-  `role_id` varchar(255) NOT NULL,
+  `role_id` int(11) NOT NULL,
   `role_name` varchar(255) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -173,8 +168,7 @@ CREATE TABLE `role` (
 --
 
 CREATE TABLE `role_permission` (
-  `role_id` varchar(255) NOT NULL,
-  `permission` varchar(255) NOT NULL,
+  `role_id` int(11) NOT NULL,
   `permission_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -185,19 +179,13 @@ CREATE TABLE `role_permission` (
 --
 
 CREATE TABLE `tour` (
-  `tour_id` varchar(255) NOT NULL,
-  `category_id` varchar(255) DEFAULT NULL,
+  `tour_id` int(11) NOT NULL,
+  `category_id` int(11) NOT NULL,
   `tour_name` varchar(255) NOT NULL,
   `tour_detail` varchar(255) DEFAULT NULL,
+  `url` varchar(255) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `tour`
---
-
-INSERT INTO `tour` (`tour_id`, `category_id`, `tour_name`, `tour_detail`, `status`) VALUES
-('2b925418-341f-45ce-86fb-07c2e3c4929c', '1', 'Du lịch , tour Trung Quốc', 'Du lịch mùa hè, có visa, mới nhất', 1);
 
 -- --------------------------------------------------------
 
@@ -206,20 +194,20 @@ INSERT INTO `tour` (`tour_id`, `category_id`, `tour_name`, `tour_detail`, `statu
 --
 
 CREATE TABLE `tour_time` (
-  `tour_time_id` varchar(255) NOT NULL,
-  `tour_id` varchar(255) NOT NULL,
+  `tour_time_id` int(11) NOT NULL,
+  `tour_id` int(11) NOT NULL,
   `time_name` varchar(255) NOT NULL,
-  `departure_time` datetime NOT NULL,
-  `departure_airline_id` varchar(255) DEFAULT NULL,
-  `return_time` datetime NOT NULL,
-  `return_airline_id` varchar(255) DEFAULT NULL,
+  `departure_time` date DEFAULT NULL,
+  `departure_airline_id` int(11) DEFAULT NULL,
+  `return_time` date DEFAULT NULL,
+  `return_airline_id` int(11) DEFAULT NULL,
   `quantity` int(11) NOT NULL,
   `quantity_reserve` int(11) NOT NULL,
   `quantity_sell` int(11) NOT NULL,
   `quantity_left` int(11) NOT NULL,
   `price_min` int(11) NOT NULL,
   `commission` int(11) NOT NULL,
-  `visa_expire` datetime(6) DEFAULT NULL,
+  `visa_expire` date DEFAULT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -235,7 +223,7 @@ ALTER TABLE `account`
   ADD UNIQUE KEY `account_id` (`account_id`),
   ADD UNIQUE KEY `account_name` (`account_name`),
   ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `account_fk6` (`role_id`);
+  ADD KEY `account_fk1` (`role_id`);
 
 --
 -- Chỉ mục cho bảng `airline`
@@ -274,7 +262,7 @@ ALTER TABLE `employee`
 ALTER TABLE `history`
   ADD PRIMARY KEY (`history_id`),
   ADD UNIQUE KEY `history_id` (`history_id`),
-  ADD KEY `history_fk1` (`employee_id`);
+  ADD KEY `history_fk1` (`account_id`);
 
 --
 -- Chỉ mục cho bảng `permission`
@@ -304,9 +292,8 @@ ALTER TABLE `role`
 -- Chỉ mục cho bảng `role_permission`
 --
 ALTER TABLE `role_permission`
-  ADD PRIMARY KEY (`role_id`,`permission`),
-  ADD KEY `role_permission_fk1` (`permission`),
-  ADD KEY `FKf8yllw1ecvwqy3ehyxawqa1qp` (`permission_id`);
+  ADD PRIMARY KEY (`role_id`,`permission_id`),
+  ADD KEY `role_permission_fk1` (`permission_id`);
 
 --
 -- Chỉ mục cho bảng `tour`
@@ -327,6 +314,52 @@ ALTER TABLE `tour_time`
   ADD KEY `tour_time_fk6` (`return_airline_id`);
 
 --
+-- AUTO_INCREMENT cho các bảng đã đổ
+--
+
+--
+-- AUTO_INCREMENT cho bảng `airline`
+--
+ALTER TABLE `airline`
+  MODIFY `airline_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `category`
+--
+ALTER TABLE `category`
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `customer`
+--
+ALTER TABLE `customer`
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `employee`
+--
+ALTER TABLE `employee`
+  MODIFY `employee_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `role`
+--
+ALTER TABLE `role`
+  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `tour`
+--
+ALTER TABLE `tour`
+  MODIFY `tour_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `tour_time`
+--
+ALTER TABLE `tour_time`
+  MODIFY `tour_time_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Các ràng buộc cho các bảng đã đổ
 --
 
@@ -334,7 +367,7 @@ ALTER TABLE `tour_time`
 -- Các ràng buộc cho bảng `account`
 --
 ALTER TABLE `account`
-  ADD CONSTRAINT `account_fk6` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`);
+  ADD CONSTRAINT `account_fk1` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`);
 
 --
 -- Các ràng buộc cho bảng `customer`
@@ -352,7 +385,7 @@ ALTER TABLE `employee`
 -- Các ràng buộc cho bảng `history`
 --
 ALTER TABLE `history`
-  ADD CONSTRAINT `history_fk1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`);
+  ADD CONSTRAINT `history_fk1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`);
 
 --
 -- Các ràng buộc cho bảng `reserve`
@@ -366,9 +399,8 @@ ALTER TABLE `reserve`
 -- Các ràng buộc cho bảng `role_permission`
 --
 ALTER TABLE `role_permission`
-  ADD CONSTRAINT `FKf8yllw1ecvwqy3ehyxawqa1qp` FOREIGN KEY (`permission_id`) REFERENCES `permission` (`permission_id`),
   ADD CONSTRAINT `role_permission_fk0` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`),
-  ADD CONSTRAINT `role_permission_fk1` FOREIGN KEY (`permission`) REFERENCES `permission` (`permission_id`);
+  ADD CONSTRAINT `role_permission_fk1` FOREIGN KEY (`permission_id`) REFERENCES `permission` (`permission_id`);
 
 --
 -- Các ràng buộc cho bảng `tour`

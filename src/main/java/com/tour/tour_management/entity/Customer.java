@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -22,16 +24,19 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Customer {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String customer_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer customer_id;
     String relationship_name;
     String customer_name;
-    String sex;
-    int phone_number;
+    int sex;
+    String phone_number;
     String email;
     String address;
+    @Column(name = "birthday", columnDefinition = "date")
     Date birthday;
+    @Column(name = "visa_expire", columnDefinition = "date")
     Date visa_expire;
+    ZonedDateTime time;
     int status;
 
 //    chính

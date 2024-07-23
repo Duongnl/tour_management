@@ -1,11 +1,11 @@
-package com.tour.tour_management.dto.request;
+package com.tour.tour_management.dto.request.tour;
 
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import com.tour.tour_management.dto.request.tourtime.TourTimeCreateRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.Set;
 
 // tao get set hashcode euqual,...
 @Data
@@ -15,9 +15,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TourRequest {
+public class TourCreateRequest {
 
-    @NotBlank(message = "TOUR_NAME_NOT_BLANK")
+//    @NotBlank(message = "TOUR_NAME_NOT_BLANK")
     String tour_name;
 
     String tour_detail;
@@ -30,7 +30,9 @@ public class TourRequest {
 //    @Max(value = 2100000000, message = "TOUR_QUANTITY_MAX_INVALID")
 //    int price;
 
-    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
-    String category_id;
+//    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
+    Integer category_id;
+
+    Set<TourTimeCreateRequest> tourTimes;
 
 }
