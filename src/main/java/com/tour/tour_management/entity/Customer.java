@@ -36,7 +36,7 @@ public class Customer {
     Date birthday;
     @Column(name = "visa_expire", columnDefinition = "date")
     Date visa_expire;
-    ZonedDateTime time;
+    LocalDateTime time;
     int status;
 
 //    chính
