@@ -45,7 +45,7 @@ public class AccountService {
     EmployeeRepository employeeRepository;
 
     public List<AccountResponse> getAccounts () {
-       List<Account> accountList = accountRepository.findAll();
+       List<Account> accountList = accountRepository.findAllOrderedByDateTime();
 //        double totalAccounts = accountList.size();
 //        int numberPages = (int) Math.ceil(totalAccounts / 8.0);
        List<AccountResponse> accountResponseList = new ArrayList<>();
@@ -57,7 +57,7 @@ public class AccountService {
     }
 
     public List<AccountResponse> getActiveAccounts () {
-        List<Account> accountList = accountRepository.findAll();
+        List<Account> accountList = accountRepository.findAllOrderedByDateTime();
 //        double totalAccounts = accountList.size();
 //        int numberPages = (int) Math.ceil(totalAccounts / 8.0);
         List<AccountResponse> accountResponseList = new ArrayList<>();
@@ -71,7 +71,7 @@ public class AccountService {
     }
 
     public List<AccountResponse> getLockedAccounts () {
-        List<Account> accountList = accountRepository.findAll();
+        List<Account> accountList = accountRepository.findAllOrderedByDateTime();
 //        double totalAccounts = accountList.size();
 //        int numberPages = (int) Math.ceil(totalAccounts / 8.0);
         List<AccountResponse> accountResponseList = new ArrayList<>();
