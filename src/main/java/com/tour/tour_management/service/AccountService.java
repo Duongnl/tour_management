@@ -46,10 +46,40 @@ public class AccountService {
 
     public List<AccountResponse> getAccounts () {
        List<Account> accountList = accountRepository.findAll();
+//        double totalAccounts = accountList.size();
+//        int numberPages = (int) Math.ceil(totalAccounts / 8.0);
        List<AccountResponse> accountResponseList = new ArrayList<>();
 
        accountList.forEach( account ->{
             accountResponseList.add(accountMapper.toAccountResponse(account));
+        });
+        return accountResponseList;
+    }
+
+    public List<AccountResponse> getActiveAccounts () {
+        List<Account> accountList = accountRepository.findAll();
+//        double totalAccounts = accountList.size();
+//        int numberPages = (int) Math.ceil(totalAccounts / 8.0);
+        List<AccountResponse> accountResponseList = new ArrayList<>();
+
+        accountList.forEach( account ->{
+            if (account.getStatus()==1) {
+                accountResponseList.add(accountMapper.toAccountResponse(account));
+            }
+        });
+        return accountResponseList;
+    }
+
+    public List<AccountResponse> getLockedAccounts () {
+        List<Account> accountList = accountRepository.findAll();
+//        double totalAccounts = accountList.size();
+//        int numberPages = (int) Math.ceil(totalAccounts / 8.0);
+        List<AccountResponse> accountResponseList = new ArrayList<>();
+
+        accountList.forEach( account ->{
+            if (account.getStatus()==0) {
+                accountResponseList.add(accountMapper.toAccountResponse(account));
+            }
         });
         return accountResponseList;
     }
