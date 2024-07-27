@@ -19,4 +19,7 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Query ("SELECT a FROM Account a WHERE a.account_name = ?1")
     Optional<Account> findByAccountName (String username);
 
+    @Query("SELECT a FROM Account a ORDER BY a.time DESC")
+    List<Account> findAllOrderedByDateTime();
+
 }
