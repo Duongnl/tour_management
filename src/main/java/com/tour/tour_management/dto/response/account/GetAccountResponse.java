@@ -1,12 +1,11 @@
 package com.tour.tour_management.dto.response.account;
 
 
-import com.tour.tour_management.dto.response.RoleResponse;
+import com.tour.tour_management.dto.response.role.RoleResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 // tao get set hashcode euqual,...
 @Data
