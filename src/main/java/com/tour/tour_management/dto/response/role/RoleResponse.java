@@ -1,7 +1,6 @@
-package com.tour.tour_management.dto.response;
+package com.tour.tour_management.dto.response.role;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

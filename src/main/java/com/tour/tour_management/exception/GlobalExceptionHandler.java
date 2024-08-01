@@ -87,6 +87,8 @@ public class GlobalExceptionHandler {
                 return  AccountErrorCode.valueOf(enumKey);
             case "EMPLOYEE" :
                 return  EmployeeErrorCode.valueOf(enumKey);
+            case "PERMISSION" :
+                return  PermissionErrorCode.valueOf(enumKey);
             default:
                 return null;
         }

@@ -1,16 +1,16 @@
 package com.tour.tour_management.controller;
 
 
+import com.tour.tour_management.dto.request.role.RoleRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
-import com.tour.tour_management.dto.response.RoleResponse;
-import com.tour.tour_management.dto.response.account.AccountResponse;
+import com.tour.tour_management.dto.response.role.GetRoleResponse;
+import com.tour.tour_management.dto.response.role.RoleResponse;
 import com.tour.tour_management.service.RoleService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,6 +27,49 @@ public class RoleController {
     public ApiResponse<List<RoleResponse>> getRoles() {
         return ApiResponse.<List<RoleResponse>>builder()
                 .result( roleService.getRoles())
+                .build();
+    }
+
+    @GetMapping("/active")
+    public ApiResponse<List<RoleResponse>> getActiveRoles() {
+        return ApiResponse.<List<RoleResponse>>builder()
+                .result( roleService.getActiveRoles())
+                .build();
+    }
+
+    @GetMapping("/locked")
+    public ApiResponse<List<RoleResponse>> getLockedRoles() {
+        return ApiResponse.<List<RoleResponse>>builder()
+                .result( roleService.getLockedRoles())
+                .build();
+    }
+
+
+    @GetMapping("/{slug}")
+    public ApiResponse<GetRoleResponse> getRole (@PathVariable String slug) {
+        return ApiResponse.<GetRoleResponse>builder()
+                .result(roleService.getRole(slug))
+                .build();
+    }
+
+    @PostMapping
+    public ApiResponse<GetRoleResponse> createRole (@RequestBody @Valid RoleRequest roleRequest) {
+       return ApiResponse.<GetRoleResponse>builder()
+               .result(roleService.createRole(roleRequest))
+               .build();
+    }
+
+    @PutMapping("/{slug}")
+    public ApiResponse<GetRoleResponse> updateRole (@PathVariable String slug,@RequestBody @Valid RoleRequest roleRequest) {
+        return ApiResponse.<GetRoleResponse>builder()
+                .result(roleService.updateRole(slug,roleRequest))
+                .build();
+    }
+
+    @PutMapping("/change-status/{role_id}")
+    public ApiResponse<GetRoleResponse> changeStatusRole (@PathVariable String role_id) {
+        return ApiResponse.<GetRoleResponse>builder()
+                .result(roleService.changeStatusRole(role_id))
                 .build();
     }
 }
