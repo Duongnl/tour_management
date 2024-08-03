@@ -25,11 +25,30 @@ public class AccountController {
     AccountService accountService;
 
     @GetMapping
-    public ApiResponse<List<AccountResponse>> getTours() {
+    public ApiResponse<List<AccountResponse>> getAccounts() {
         return ApiResponse.<List<AccountResponse>>builder()
                 .result( accountService.getAccounts())
                 .build();
     }
+
+    @GetMapping("/locked")
+    public ApiResponse<List<AccountResponse>> getLockedAccounts() {
+        return ApiResponse.<List<AccountResponse>>builder()
+                .result( accountService.getLockedAccounts())
+                .build();
+    }
+
+    @GetMapping("/active")
+    public ApiResponse<List<AccountResponse>> getActiveAccounts() {
+        return ApiResponse.<List<AccountResponse>>builder()
+                .result( accountService.getActiveAccounts())
+                .build();
+    }
+
+//    @GetMapping
+//    public Integer getAccountsFollowPage(@RequestParam(defaultValue = "1") Integer page) {
+//        return page;
+//    }
 
     @GetMapping("/my-info")
     ApiResponse<GetAccountResponse> getMyInfo () {

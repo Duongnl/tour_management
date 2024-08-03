@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +18,8 @@ public interface AccountRepository extends JpaRepository<Account,String> {
 
     @Query ("SELECT a FROM Account a WHERE a.account_name = ?1")
     Optional<Account> findByAccountName (String username);
+
+    @Query("SELECT a FROM Account a ORDER BY a.time DESC")
+    List<Account> findAllOrderedByDateTime();
+
 }
