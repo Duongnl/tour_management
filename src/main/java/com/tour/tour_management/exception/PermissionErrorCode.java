@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum PermissionErrorCode implements ErrorCode {
     PERMISSION_NOT_FOUND("PERMISSION_1", "Permission not found", HttpStatus.NOT_FOUND),
-
+    UNAUTHORIZED("PERMISSION_2","You do not have permission", HttpStatus.FORBIDDEN),
 
     ;
 

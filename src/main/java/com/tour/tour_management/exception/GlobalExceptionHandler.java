@@ -4,6 +4,7 @@ package com.tour.tour_management.exception;
 import com.tour.tour_management.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,7 +48,21 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(value = AccessDeniedException.class)
+    ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException exception){
+        List<ApiResponse> apiResponseList = new ArrayList<>();
+        apiResponseList.add(ApiResponse.builder()
+                .status(null)
+                .code(PermissionErrorCode.UNAUTHORIZED.getCode())
+                .message(PermissionErrorCode.UNAUTHORIZED.getMessage())
+                .build());
 
+        return  ResponseEntity.badRequest().body(ApiResponse.builder()
+                .status("FAIL")
+                .error(apiResponseList)
+                .build()
+        );
+    }
 
 
 //    DefaultHandlerExceptionResolver

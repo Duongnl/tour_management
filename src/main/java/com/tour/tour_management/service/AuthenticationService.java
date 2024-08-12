@@ -13,6 +13,7 @@ import com.tour.tour_management.dto.response.IntrospectResponse;
 import com.tour.tour_management.entity.Account;
 import com.tour.tour_management.exception.AccountErrorCode;
 import com.tour.tour_management.exception.AppException;
+import com.tour.tour_management.mapper.RoleMapper;
 import com.tour.tour_management.repository.AccountRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 // kiem tra mat khau tai khoan, neu dung thi ra token
 @RequiredArgsConstructor
@@ -40,6 +41,8 @@ public class AuthenticationService {
     @NonFinal// de no kh inject vao contructe cua clombok
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY ;
+
+    RoleMapper roleMapper;
 
 // kiem tra xem token co hop le khong
     public IntrospectResponse introspect(IntrospectRequest request)
@@ -84,7 +87,10 @@ public class AuthenticationService {
                 throw new AppException(AccountErrorCode.ACCOUNT_LOCKED);
             }
 
-            String token = generateToken(account.getAccount_name());
+
+            String token = generateToken(account);
+
+
            return AuthenticationResponse.builder()
                    .token(token)
                    .authenticated(true)
@@ -93,19 +99,19 @@ public class AuthenticationService {
     }
 
 //    tao token
-    public String generateToken (String account_name) {
+    public String generateToken (Account account) {
         //        tao header
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         //      tao body
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(account_name)
+                .subject(account.getAccount_name())
                 .issuer("tour_management.com") // token nay dc issuer tu ai
                 .issueTime(new Date()) // thoi diem hien tai
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS)
                                 .toEpochMilli())) // thoi han cua token, het han sau 1h
-                .claim("scope", "NV")
+                .claim("scope",builtScope(account) )
                 .build();
 
         //      tao pay load
@@ -124,6 +130,17 @@ public class AuthenticationService {
 //            log.error("Cannnot create token",e);
             throw new RuntimeException(e);
         }
+    }
+
+//    built cái scope permission cho token
+    private String builtScope (Account account) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if (!CollectionUtils.isEmpty(account.getRole().getPermissions())) {
+            account.getRole().getPermissions().forEach(permission -> {
+                stringJoiner.add(permission.getPermission_id());
+            });
+        }
+        return stringJoiner.toString();
     }
 
 }
