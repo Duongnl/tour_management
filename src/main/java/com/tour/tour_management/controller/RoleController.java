@@ -3,7 +3,6 @@ package com.tour.tour_management.controller;
 
 import com.tour.tour_management.dto.request.role.RoleRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
-import com.tour.tour_management.dto.response.role.GetRoleResponse;
 import com.tour.tour_management.dto.response.role.RoleResponse;
 import com.tour.tour_management.service.RoleService;
 import jakarta.validation.Valid;
@@ -46,29 +45,29 @@ public class RoleController {
 
 
     @GetMapping("/{slug}")
-    public ApiResponse<GetRoleResponse> getRole (@PathVariable String slug) {
-        return ApiResponse.<GetRoleResponse>builder()
+    public ApiResponse<RoleResponse> getRole (@PathVariable String slug) {
+        return ApiResponse.<RoleResponse>builder()
                 .result(roleService.getRole(slug))
                 .build();
     }
 
     @PostMapping
-    public ApiResponse<GetRoleResponse> createRole (@RequestBody @Valid RoleRequest roleRequest) {
-       return ApiResponse.<GetRoleResponse>builder()
+    public ApiResponse<RoleResponse> createRole (@RequestBody @Valid RoleRequest roleRequest) {
+       return ApiResponse.<RoleResponse>builder()
                .result(roleService.createRole(roleRequest))
                .build();
     }
 
     @PutMapping("/{slug}")
-    public ApiResponse<GetRoleResponse> updateRole (@PathVariable String slug,@RequestBody @Valid RoleRequest roleRequest) {
-        return ApiResponse.<GetRoleResponse>builder()
+    public ApiResponse<RoleResponse> updateRole (@PathVariable String slug,@RequestBody @Valid RoleRequest roleRequest) {
+        return ApiResponse.<RoleResponse>builder()
                 .result(roleService.updateRole(slug,roleRequest))
                 .build();
     }
 
     @PutMapping("/change-status/{role_id}")
-    public ApiResponse<GetRoleResponse> changeStatusRole (@PathVariable String role_id) {
-        return ApiResponse.<GetRoleResponse>builder()
+    public ApiResponse<RoleResponse> changeStatusRole (@PathVariable String role_id) {
+        return ApiResponse.<RoleResponse>builder()
                 .result(roleService.changeStatusRole(role_id))
                 .build();
     }
