@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatusCode;
 public enum CategoryErrorCode implements ErrorCode {
     CATEGORY_NOT_FOUND("CATEGORY_1", "Category not found", HttpStatus.NOT_FOUND),
     CATEGORY_NAME_INVALID ("CATEGORY_2","Category name is invalid", HttpStatus.BAD_REQUEST),
-    CATEGORY_DETAIL_INVALID ("CATEGORY_3","Category name is invalid", HttpStatus.BAD_REQUEST),
+    CATEGORY_DETAIL_INVALID ("CATEGORY_3","Category detail is invalid", HttpStatus.BAD_REQUEST),
     CATEGORY_URL_INVALID ("CATEGORY_4","Category url is invalid", HttpStatus.BAD_REQUEST)
 
 

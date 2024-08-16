@@ -21,7 +21,8 @@ public class CategoryRequest {
     @NotNull(message = "CATEGORY_NAME_INVALID")
     String category_name;
 
-    @Pattern(regexp = "^(?=(.*\\p{L}){2,})[\\p{L} ]{2,255}$",message = "CATEGORY_DETAIL_INVALID")
+//    @Pattern(regexp = "^(?=(.*\\p{L}){2,})[\\p{L} ]{2,255}$",message = "CATEGORY_DETAIL_INVALID")
+    @Pattern(regexp = "^[\\p{L}0-9 ,.\\-]{0,255}$", message = "CATEGORY_DETAIL_INVALID")
     @NotNull(message = "CATEGORY_DETAIL_INVALID")
     String category_detail;
 
