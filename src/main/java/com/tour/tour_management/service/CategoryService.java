@@ -1,7 +1,7 @@
 package com.tour.tour_management.service;
 
 
-import com.tour.tour_management.dto.request.category.CategoryCreateRequest;
+import com.tour.tour_management.dto.request.category.CategoryRequest;
 import com.tour.tour_management.dto.request.category.CategoryUpdateRequest;
 import com.tour.tour_management.dto.response.category.CategoryResponse;
 import com.tour.tour_management.dto.response.category.GetCategoryResponse;
@@ -39,7 +39,7 @@ public class CategoryService {
         return categoryResponseList;
     }
 
-    public List<CategoryResponse> getDeletedCategories(){
+    public List<CategoryResponse> getLockedCategories(){
         List<Category> categoryList =  categoryRepository.findByStatus(0);
         List<CategoryResponse> categoryResponseList = new ArrayList<>();
         categoryList.forEach(
@@ -48,6 +48,18 @@ public class CategoryService {
                 });
         return categoryResponseList;
     }
+
+    public List<CategoryResponse> getActiveCategories(){
+        List<Category> categoryList =  categoryRepository.findByStatus(1);
+        List<CategoryResponse> categoryResponseList = new ArrayList<>();
+        categoryList.forEach(
+                category -> {
+                    categoryResponseList.add(categoryMapper.toCategoryResponse(category));
+                });
+        return categoryResponseList;
+    }
+
+
 
     public GetCategoryResponse getCategory(String category_url) {
 
@@ -60,10 +72,9 @@ public class CategoryService {
         return categoryMapper.toGetCategoryResponse(category);
     }
 
-    public CategoryResponse createCategory(CategoryCreateRequest categoryCreateRequest) {
-        Category category = categoryMapper.toCategory(categoryCreateRequest);
+    public CategoryResponse createCategory(CategoryRequest categoryRequest) {
+        Category category = categoryMapper.toCategory(categoryRequest);
         category.setStatus(1);
-        category.setUrl(StringUtils.createSlug(category.getCategory_name()));
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }
 
