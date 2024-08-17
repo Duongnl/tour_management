@@ -1,12 +1,15 @@
 package com.tour.tour_management.dto.response.customer;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.tour.tour_management.entity.Customer;
+import com.tour.tour_management.entity.Reserve;
+import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Set;
 
 @Data
 @Builder // tao builder de tao doi tuong nhanh
@@ -14,21 +17,18 @@ import java.util.Date;
 @AllArgsConstructor
 // tu them private vao cac bien khai bao
 
-public class GetCustomerResponse {
-
+public class CustomerDetailResponse {
     Integer customer_id;
     String customer_name;
     int sex;
-    Integer customer_rel_id;
+    String relationship_name;
     String phone_number;
     String email;
-    String relationship_name;
     String address;
     Date birthday;
     Date visa_expire;
-    int status;
     LocalDateTime time;
-
-
-    public String getUrl(){return customer_name+'-'+customer_id;}
+    int status;
+    CustomerResponse customerParent;
+    Set<CustomerResponse> customerGroup;
 }

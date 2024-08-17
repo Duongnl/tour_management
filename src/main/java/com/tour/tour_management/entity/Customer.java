@@ -8,7 +8,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,9 +25,11 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer customer_id;
-    String relationship_name;
     String customer_name;
     int sex;
+    String relationship_name;
+
+    @Column(name = "phone_number")
     String phone_number;
     String email;
     String address;
@@ -39,17 +40,18 @@ public class Customer {
     LocalDateTime time;
     int status;
 
-//    chính
+    //    Người đại diện
     @ManyToOne
     @JoinColumn(name ="customer_rel_id" , nullable = true, referencedColumnName = "customer_id")
     @JsonBackReference
     Customer customer;
 
-//    nguoi lien quan
+    //    Người liên quan
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @JsonManagedReference
     Set<Customer> customers;
 
+    //   đặt vé
     @OneToMany(mappedBy = "customer",  cascade = CascadeType.ALL)
     @JsonManagedReference
     Set<Reserve> reserves;

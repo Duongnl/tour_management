@@ -10,9 +10,10 @@ import org.springframework.http.HttpStatusCode;
 public enum CustomerErrorCode implements ErrorCode {
     CUSTOMER_NOT_FOUND("CUSTOMER_1", "Customer not found", HttpStatus.NOT_FOUND),
     CUSTOMER_NAME_NOT_BLANK ("CUSTOMER_2","Customer name not blank", HttpStatus.BAD_REQUEST),
-    CUSTOMER_URL_NOT_BLANK ("CUSTOMER_3","Customer url not blank", HttpStatus.BAD_REQUEST)
+    CUSTOMER_URL_NOT_BLANK ("CUSTOMER_3","Customer url not blank", HttpStatus.BAD_REQUEST),
+    CUSTOMER_PHONE_NUMBER_EXISTED("CUSTOMER_4", "Customer phone number existed", HttpStatus.BAD_REQUEST),
+    CUSTOMER_RELATIONSHIP_ID_DIDNT_EXIST("CUSTOMER_5", "Customer relationship not found", HttpStatus.BAD_REQUEST);
 
-    ;
 
     private String code;
     private String message;

@@ -3,8 +3,9 @@ package com.tour.tour_management.controller;
 import com.tour.tour_management.dto.request.customer.CustomerCreateRequest;
 import com.tour.tour_management.dto.request.customer.CustomerUpdateRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
+import com.tour.tour_management.dto.response.customer.CustomerDetailResponse;
 import com.tour.tour_management.dto.response.customer.CustomerResponse;
-import com.tour.tour_management.dto.response.customer.GetCustomerResponse;
+import com.tour.tour_management.entity.Customer;
 import com.tour.tour_management.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -39,23 +40,23 @@ public class CustomerController {
     }
 
     @GetMapping("/{customer_url}")
-    public  ApiResponse<GetCustomerResponse> getCustomer(@PathVariable String customer_url) {
-        return ApiResponse.<GetCustomerResponse>builder()
+    public  ApiResponse<CustomerDetailResponse> getCustomer(@PathVariable String customer_url) {
+        return ApiResponse.<CustomerDetailResponse>builder()
                 .result( customerService.getCustomer(customer_url))
                 .build();
     }
 
     @PostMapping
-    public ApiResponse<CustomerResponse> createCustomer (@RequestBody @Valid CustomerCreateRequest customerCreateRequest) {
-        return ApiResponse.<CustomerResponse>builder()
+    public ApiResponse<CustomerDetailResponse> createCustomer (@RequestBody @Valid CustomerCreateRequest customerCreateRequest) {
+        return ApiResponse.<CustomerDetailResponse>builder()
                 .result(customerService.createCustomer(customerCreateRequest))
                 .build();
     }
 
     @PutMapping("/{customer_url}")
-    public ApiResponse<CustomerResponse> updateCustomer (@PathVariable String customer_url
+    public ApiResponse<CustomerDetailResponse> updateCustomer (@PathVariable String customer_url
             ,@RequestBody @Valid CustomerUpdateRequest customerUpdateRequest){
-        return ApiResponse.<CustomerResponse>builder()
+        return ApiResponse.<CustomerDetailResponse>builder()
                 .result(customerService.updateCustomer(customer_url,customerUpdateRequest))
                 .build();
     }

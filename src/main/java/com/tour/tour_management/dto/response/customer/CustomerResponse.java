@@ -16,19 +16,15 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 public class CustomerResponse {
-
     Integer customer_id;
     String customer_name;
     int sex;
-    Integer customer_rel_id;
+    String relationship_name;
     String phone_number;
     String email;
-    String relationship_name;
     String address;
     Date birthday;
     Date visa_expire;
-    int status;
     LocalDateTime time;
-
-    public String getUrl(){return customer_name+'-'+customer_id;}
+    int status;
 }
