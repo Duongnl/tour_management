@@ -21,7 +21,7 @@ public interface CategoryMapper {
 //    mapping category request to category entity
     Category toCategory(CategoryRequest categoryRequest);
 
-    void updateCategory(@MappingTarget Category category, CategoryUpdateRequest categoryUpdateRequest);
+    void updateCategory(@MappingTarget Category category, CategoryRequest categoryUpdateRequest);
 
 //    @Named("convert")
 //    default Set<TourConvert> convert(Set<Tour> tours){
