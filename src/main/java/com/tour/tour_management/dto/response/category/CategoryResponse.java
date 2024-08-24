@@ -20,9 +20,7 @@ public class CategoryResponse {
     String url;
     int status;
 
-    public String getUrl () {
-        return url + '-' +category_id;
-    }
+
 }
 
 

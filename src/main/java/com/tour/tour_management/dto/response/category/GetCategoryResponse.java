@@ -24,8 +24,4 @@ public class GetCategoryResponse {
     int status;
 //    Set<CategoryMapper.TourConvert> tours;
     Set<TourResponse> tours;
-
-    public String getUrl () {
-        return url + '-' +category_id;
-    }
 }

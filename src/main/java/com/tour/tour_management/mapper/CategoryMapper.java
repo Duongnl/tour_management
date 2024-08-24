@@ -1,6 +1,6 @@
 package com.tour.tour_management.mapper;
 
-import com.tour.tour_management.dto.request.category.CategoryCreateRequest;
+import com.tour.tour_management.dto.request.category.CategoryRequest;
 import com.tour.tour_management.dto.request.category.CategoryUpdateRequest;
 import com.tour.tour_management.dto.response.category.CategoryResponse;
 import com.tour.tour_management.dto.response.category.GetCategoryResponse;
@@ -19,9 +19,9 @@ public interface CategoryMapper {
     CategoryResponse toCategoryResponse(Category category);
 
 //    mapping category request to category entity
-    Category toCategory(CategoryCreateRequest categoryCreateRequest);
+    Category toCategory(CategoryRequest categoryRequest);
 
-    void updateCategory(@MappingTarget Category category, CategoryUpdateRequest categoryUpdateRequest);
+    void updateCategory(@MappingTarget Category category, CategoryRequest categoryUpdateRequest);
 
 //    @Named("convert")
 //    default Set<TourConvert> convert(Set<Tour> tours){

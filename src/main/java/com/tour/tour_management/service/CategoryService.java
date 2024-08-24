@@ -1,13 +1,16 @@
 package com.tour.tour_management.service;
 
 
-import com.tour.tour_management.dto.request.category.CategoryCreateRequest;
+import com.tour.tour_management.dto.request.category.CategoryRequest;
 import com.tour.tour_management.dto.request.category.CategoryUpdateRequest;
 import com.tour.tour_management.dto.response.category.CategoryResponse;
 import com.tour.tour_management.dto.response.category.GetCategoryResponse;
+import com.tour.tour_management.dto.response.role.RoleResponse;
 import com.tour.tour_management.entity.Category;
+import com.tour.tour_management.entity.Role;
 import com.tour.tour_management.exception.AppException;
 import com.tour.tour_management.exception.CategoryErrorCode;
+import com.tour.tour_management.exception.RoleErrorCode;
 import com.tour.tour_management.mapper.CategoryMapper;
 import com.tour.tour_management.repository.CategoryRepository;
 import com.tour.tour_management.utils.StringUtils;
@@ -39,7 +42,7 @@ public class CategoryService {
         return categoryResponseList;
     }
 
-    public List<CategoryResponse> getDeletedCategories(){
+    public List<CategoryResponse> getLockedCategories(){
         List<Category> categoryList =  categoryRepository.findByStatus(0);
         List<CategoryResponse> categoryResponseList = new ArrayList<>();
         categoryList.forEach(
@@ -49,7 +52,19 @@ public class CategoryService {
         return categoryResponseList;
     }
 
-    public GetCategoryResponse getCategory(String category_url) {
+    public List<CategoryResponse> getActiveCategories(){
+        List<Category> categoryList =  categoryRepository.findByStatus(1);
+        List<CategoryResponse> categoryResponseList = new ArrayList<>();
+        categoryList.forEach(
+                category -> {
+                    categoryResponseList.add(categoryMapper.toCategoryResponse(category));
+                });
+        return categoryResponseList;
+    }
+
+
+
+    public CategoryResponse getCategory(String category_url) {
 
         if (StringUtils.getIdFromUrl(category_url) == -1) {
             throw new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND);
@@ -57,29 +72,41 @@ public class CategoryService {
 
         Category category = categoryRepository.findById(StringUtils.getIdFromUrl(category_url))
                 .orElseThrow(() -> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
-        return categoryMapper.toGetCategoryResponse(category);
+        return categoryMapper.toCategoryResponse(category);
     }
 
-    public CategoryResponse createCategory(CategoryCreateRequest categoryCreateRequest) {
-        Category category = categoryMapper.toCategory(categoryCreateRequest);
+    public CategoryResponse createCategory(CategoryRequest categoryRequest) {
+        Category category = categoryMapper.toCategory(categoryRequest);
         category.setStatus(1);
-        category.setUrl(StringUtils.createSlug(category.getCategory_name()));
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }
 
-    public CategoryResponse updateCategory(String category_url , CategoryUpdateRequest categoryUpdateRequest) {
-
-        if (StringUtils.getIdFromUrl(category_url) == -1) {
-            throw new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND);
-        }
+    public CategoryResponse updateCategory(String category_url , CategoryRequest categoryRequest) {
 
         Category category = categoryRepository.findById(StringUtils.getIdFromUrl(category_url))
                 .orElseThrow(() -> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
 
-        categoryMapper.updateCategory(category, categoryUpdateRequest);
-        category.setUrl(StringUtils.createSlug(category.getUrl()));
+        categoryMapper.updateCategory(category, categoryRequest);
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }
+
+    public CategoryResponse changeCategoryStatus (String category_id ) {
+        Category category = categoryRepository.findById(Integer.parseInt(category_id))
+                .orElseThrow(() -> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
+                // cần khóa
+        if (category.getStatus() == 1) {
+            category.getTours().forEach(tour -> {
+                if (tour.getStatus() == 1) {
+                    throw new AppException(CategoryErrorCode.CATEGORY_TOUR_USE);
+                }
+            });
+            category.setStatus(0);
+        } else {
+            category.setStatus(1);
+        }
+        return categoryMapper.toCategoryResponse(categoryRepository.save(category));
+    }
+
 
     public CategoryResponse undoCategory(String category_url) {
         if (StringUtils.getIdFromUrl(category_url) == -1) {

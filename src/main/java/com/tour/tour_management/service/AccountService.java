@@ -20,6 +20,9 @@ import com.tour.tour_management.utils.StringUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +38,7 @@ import java.util.List;
 // thay the autowired va tu tao private final,
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-
+@Slf4j
 @Service
 public class AccountService {
 
@@ -44,18 +47,18 @@ public class AccountService {
     AccountMapper accountMapper;
     EmployeeRepository employeeRepository;
 
+    @PreAuthorize("hasRole('ACCESS_ACCOUNT')")
     public List<AccountResponse> getAccounts () {
        List<Account> accountList = accountRepository.findAllOrderedByDateTime();
-//        double totalAccounts = accountList.size();
-//        int numberPages = (int) Math.ceil(totalAccounts / 8.0);
        List<AccountResponse> accountResponseList = new ArrayList<>();
-
+        log.info("In method get user");
        accountList.forEach( account ->{
             accountResponseList.add(accountMapper.toAccountResponse(account));
         });
         return accountResponseList;
     }
 
+    @PreAuthorize("hasRole('ACCESS_ACCOUNT')")
     public List<AccountResponse> getActiveAccounts () {
         List<Account> accountList = accountRepository.findAllOrderedByDateTime();
 //        double totalAccounts = accountList.size();
@@ -70,6 +73,7 @@ public class AccountService {
         return accountResponseList;
     }
 
+    @PreAuthorize("hasRole('ACCESS_ACCOUNT')")
     public List<AccountResponse> getLockedAccounts () {
         List<Account> accountList = accountRepository.findAllOrderedByDateTime();
 //        double totalAccounts = accountList.size();
@@ -84,13 +88,13 @@ public class AccountService {
         return accountResponseList;
     }
 
-
+    @PreAuthorize("hasRole('ACCESS_ACCOUNT')")
     public GetAccountResponse getAccount(String url){
         return accountMapper.toGetAccountResponse(accountRepository.findById(StringUtils.getUUIDFromUrl(url))
                 .orElseThrow(() -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND)));
     }
 
-
+    @PreAuthorize("hasRole('CREATE_ACCOUNT')")
     public GetAccountResponse createAccount (AccountRequest accountRequest) {
         if(accountRepository.existedAccountName(accountRequest.getAccount_name())){
             throw new AppException(AccountErrorCode.ACCOUNT_EXISTED);
@@ -119,6 +123,7 @@ public class AccountService {
         return accountMapper.toGetAccountResponse(accountRepository.save(account));
     }
 
+    @PreAuthorize("hasRole('UPDATE_ACCOUNT')")
     public GetAccountResponse updateEmployee (String url, EmployeeRequest employeeRequest) {
         Account account =  accountRepository.findById(StringUtils.getUUIDFromUrl(url)).orElseThrow(
                 () -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND));
@@ -132,7 +137,7 @@ public class AccountService {
     }
 
 
-
+    @PreAuthorize("hasRole('UPDATE_ACCOUNT')")
     public GetAccountResponse updateAccount (String url, AccountUpdateRequest accountUpdateRequest) {
         Account account =  accountRepository.findById(StringUtils.getUUIDFromUrl(url)).orElseThrow(
                 () -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND));
@@ -183,17 +188,20 @@ public class AccountService {
         return accountMapper.toGetAccountResponse(account);
     }
 
+    @PreAuthorize("hasRole('CHANGE_ACCOUNT_STATUS')")
     public  GetAccountResponse changeStatus (String account_id) {
         Account account =   accountRepository.findById(account_id).orElseThrow(
                 () -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND));
 
         if (account.getStatus() == 0) {
             account.setStatus(1);
+            account.getRole().setStatus(1);
         } else {
             account.setStatus(0);
         }
         return accountMapper.toGetAccountResponse(accountRepository.save(account));
     }
+
 
 
 

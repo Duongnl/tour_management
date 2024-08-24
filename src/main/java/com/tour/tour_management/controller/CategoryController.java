@@ -1,10 +1,11 @@
 package com.tour.tour_management.controller;
 
-import com.tour.tour_management.dto.request.category.CategoryCreateRequest;
+import com.tour.tour_management.dto.request.category.CategoryRequest;
 import com.tour.tour_management.dto.request.category.CategoryUpdateRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
 import com.tour.tour_management.dto.response.category.CategoryResponse;
 import com.tour.tour_management.dto.response.category.GetCategoryResponse;
+import com.tour.tour_management.dto.response.role.RoleResponse;
 import com.tour.tour_management.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -31,32 +32,48 @@ public class CategoryController {
     }
 
 //    getDeletedCategories
-    @GetMapping("/getDeletedCategories")
+    @GetMapping("/locked")
     public  ApiResponse<List<CategoryResponse>> getDeletedCategories() {
     return ApiResponse.<List<CategoryResponse>>builder()
-            .result( categoryService.getDeletedCategories())
+            .result( categoryService.getLockedCategories())
             .build();
     }
 
+    @GetMapping("/active")
+    public  ApiResponse<List<CategoryResponse>> getActiveCategories() {
+        return ApiResponse.<List<CategoryResponse>>builder()
+                .result( categoryService.getActiveCategories())
+                .build();
+    }
+
+
+
     @GetMapping("/{category_url}")
-    public  ApiResponse<GetCategoryResponse> getCategory(@PathVariable String category_url) {
-        return ApiResponse.<GetCategoryResponse>builder()
+    public  ApiResponse<CategoryResponse> getCategory(@PathVariable String category_url) {
+        return ApiResponse.<CategoryResponse>builder()
                 .result( categoryService.getCategory(category_url))
                 .build();
     }
 
     @PostMapping
-    public ApiResponse<CategoryResponse> createCategory (@RequestBody @Valid CategoryCreateRequest categoryCreateRequest) {
+    public ApiResponse<CategoryResponse> createCategory (@RequestBody @Valid CategoryRequest categoryRequest) {
         return ApiResponse.<CategoryResponse>builder()
-                .result(categoryService.createCategory(categoryCreateRequest))
+                .result(categoryService.createCategory(categoryRequest))
                 .build();
     }
 
     @PutMapping("/{category_url}")
     public ApiResponse<CategoryResponse> updateCategory (@PathVariable String category_url
-            ,@RequestBody @Valid CategoryUpdateRequest categoryUpdateRequest){
+            ,@RequestBody @Valid CategoryRequest categoryRequest){
         return ApiResponse.<CategoryResponse>builder()
-                .result(categoryService.updateCategory(category_url,categoryUpdateRequest))
+                .result(categoryService.updateCategory(category_url,categoryRequest))
+                .build();
+    }
+
+    @PutMapping("/change-status/{category_id}")
+    public ApiResponse<CategoryResponse> changeStatusRole (@PathVariable String category_id) {
+        return ApiResponse.<CategoryResponse>builder()
+                .result(categoryService.changeCategoryStatus(category_id))
                 .build();
     }
 

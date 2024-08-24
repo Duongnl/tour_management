@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -49,14 +51,25 @@ public class SecurityConfig {
 //        ham nay de cho phep nhan token, khi o front end gui token qua header Authorization thi ham cai nay se nhan duoc
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
-//                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
 //
 //                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()
-                        ));
+                        );
 //
 //      mac dinh  tat cau hinh nay di
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
+    }
+
+//    convert SCOPE thanh ROLE
+    @Bean
+    JwtAuthenticationConverter jwtAuthenticationConverter(){
+        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+        return  jwtAuthenticationConverter;
     }
 
 //    cau hinh giai ma token, xem co hop le hay khong hop le
@@ -67,6 +80,8 @@ public class SecurityConfig {
                 .macAlgorithm(MacAlgorithm.HS512)
                 .build();
     }
+
+
 
     @Bean
     public CorsFilter corsFilter() {
