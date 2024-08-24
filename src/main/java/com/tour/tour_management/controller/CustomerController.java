@@ -3,6 +3,7 @@ package com.tour.tour_management.controller;
 import com.tour.tour_management.dto.request.customer.CustomerCreateRequest;
 import com.tour.tour_management.dto.request.customer.CustomerUpdateRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
+import com.tour.tour_management.dto.response.account.GetAccountResponse;
 import com.tour.tour_management.dto.response.customer.CustomerDetailResponse;
 import com.tour.tour_management.dto.response.customer.CustomerResponse;
 import com.tour.tour_management.entity.Customer;
@@ -28,6 +29,13 @@ public class CustomerController {
     public  ApiResponse<List<CustomerResponse>> getCustomers() {
         return ApiResponse.<List<CustomerResponse>>builder()
                 .result( customerService.getCustomers())
+                .build();
+    }
+
+    @GetMapping("/parent")
+    public  ApiResponse<List<CustomerResponse>> getCustomersParent() {
+        return ApiResponse.<List<CustomerResponse>>builder()
+                .result( customerService.getCustomersParent())
                 .build();
     }
 
@@ -72,6 +80,12 @@ public class CustomerController {
     public ApiResponse deleteCustomer (@PathVariable String customer_url) {
         return ApiResponse.builder()
                 .result( customerService.deleteCustomer(customer_url))
+                .build();
+    }
+    @PutMapping ("/change-status/{customer_url}")
+    public  ApiResponse<CustomerDetailResponse> changeStatus(@PathVariable String customer_url ) {
+        return ApiResponse.<CustomerDetailResponse>builder()
+                .result(customerService.changeStatus(customer_url))
                 .build();
     }
 

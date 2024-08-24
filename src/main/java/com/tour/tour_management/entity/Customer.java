@@ -34,9 +34,9 @@ public class Customer {
     String email;
     String address;
     @Column(name = "birthday", columnDefinition = "date")
-    Date birthday;
+    LocalDateTime birthday;
     @Column(name = "visa_expire", columnDefinition = "date")
-    Date visa_expire;
+    LocalDateTime  visa_expire;
     LocalDateTime time;
     int status;
 

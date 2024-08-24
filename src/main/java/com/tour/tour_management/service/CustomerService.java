@@ -3,9 +3,12 @@ package com.tour.tour_management.service;
 
 import com.tour.tour_management.dto.request.customer.CustomerCreateRequest;
 import com.tour.tour_management.dto.request.customer.CustomerUpdateRequest;
+import com.tour.tour_management.dto.response.account.GetAccountResponse;
 import com.tour.tour_management.dto.response.customer.CustomerResponse;
 import com.tour.tour_management.dto.response.customer.CustomerDetailResponse;
+import com.tour.tour_management.entity.Account;
 import com.tour.tour_management.entity.Customer;
+import com.tour.tour_management.exception.AccountErrorCode;
 import com.tour.tour_management.exception.AppException;
 import com.tour.tour_management.exception.CustomerErrorCode;
 import com.tour.tour_management.mapper.CustomerMapper;
@@ -36,6 +39,18 @@ public class CustomerService {
         customerList.forEach(
                 customer -> {
                         customerResponseList.add(customerMapper.toCustomerResponse(customer));
+                });
+        return customerResponseList;
+    }
+
+    public List<CustomerResponse> getCustomersParent(){
+        List<Customer> customerList =  customerRepository.findAll();
+        List<CustomerResponse> customerResponseList = new ArrayList<>();
+        customerList.forEach(
+                customer -> {
+                    if(customer.getCustomer()==null) {
+                        customerResponseList.add(customerMapper.toCustomerResponse(customer));
+                    }
                 });
         return customerResponseList;
     }
@@ -111,12 +126,21 @@ public class CustomerService {
 
     public CustomerDetailResponse updateCustomer(String CUSTOMER_url , CustomerUpdateRequest customerUpdateRequest) {
 
+        Customer customer = customerRepository.findById(StringUtils.getIdFromUrl(CUSTOMER_url))
+                .orElseThrow(() -> new AppException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
+
         // check phone number
-        if (customerRepository.existsByPhone_number(customerUpdateRequest.getPhone_number())) {
-            throw new AppException(CustomerErrorCode.CUSTOMER_PHONE_NUMBER_EXISTED);
+        if(customerUpdateRequest.getPhone_number()!=null){
+            String oldPhoneNumber = customer.getPhone_number();
+            String newPhoneNumber = customerUpdateRequest.getPhone_number();
+            if (!newPhoneNumber.equals(oldPhoneNumber))
+                if (customerRepository.existsByPhone_number(customerUpdateRequest.getPhone_number())) {
+                    throw new AppException(CustomerErrorCode.CUSTOMER_PHONE_NUMBER_EXISTED);
+                }
+
         }
 
-        // chech customer relationship
+        // check customer relationship
         Customer customerParent= null;
         if(customerUpdateRequest.getCustomer_rel_id()!=null){
             customerParent=customerRepository.findById(customerUpdateRequest.getCustomer_rel_id()).orElseThrow(
@@ -124,8 +148,6 @@ public class CustomerService {
             );
         }
 
-        Customer customer = customerRepository.findById(StringUtils.getIdFromUrl(CUSTOMER_url))
-                .orElseThrow(() -> new AppException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
 
         customerMapper.updateCustomer(customer, customerUpdateRequest);
         return customerMapper.toCustomerDetailResponse(customerRepository.save(customer));
@@ -155,5 +177,20 @@ public class CustomerService {
 
         customer.setStatus(0);
         return customerMapper.toCustomerResponse(customerRepository.save(customer));
+    }
+    public CustomerDetailResponse changeStatus (String customer_url) {
+        if (StringUtils.getIdFromUrl(customer_url) == -1) {
+            throw new AppException(CustomerErrorCode.CUSTOMER_NOT_FOUND);
+        }
+
+        Customer customer = customerRepository.findById(StringUtils.getIdFromUrl(customer_url))
+                .orElseThrow(() -> new AppException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
+
+        if (customer.getStatus() == 0) {
+            customer.setStatus(1);
+        } else {
+            customer.setStatus(0);
+        }
+        return customerMapper.toCustomerDetailResponse(customerRepository.save(customer));
     }
 }
