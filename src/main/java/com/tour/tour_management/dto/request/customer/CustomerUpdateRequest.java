@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -32,11 +32,8 @@ public class CustomerUpdateRequest {
 
     String address;
 
-    Date birthday;
+    LocalDate birthday;
 
-    Date visa_expire;
+    LocalDate visa_expire;
 
-    String url;
-
-    int status;
 }

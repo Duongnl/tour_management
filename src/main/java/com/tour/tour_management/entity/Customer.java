@@ -8,7 +8,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -34,9 +34,9 @@ public class Customer {
     String email;
     String address;
     @Column(name = "birthday", columnDefinition = "date")
-    LocalDateTime birthday;
+    LocalDate birthday;
     @Column(name = "visa_expire", columnDefinition = "date")
-    LocalDateTime  visa_expire;
+    LocalDate  visa_expire;
     LocalDateTime time;
     int status;
 

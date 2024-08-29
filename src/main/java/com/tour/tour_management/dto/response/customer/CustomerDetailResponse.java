@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Data
@@ -25,8 +25,8 @@ public class CustomerDetailResponse {
     String phone_number;
     String email;
     String address;
-    Date birthday;
-    Date visa_expire;
+    LocalDate birthday;
+    LocalDate visa_expire;
     LocalDateTime time;
     int status;
     CustomerResponse customerParent;

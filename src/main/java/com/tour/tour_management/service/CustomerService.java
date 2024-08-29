@@ -3,7 +3,6 @@ package com.tour.tour_management.service;
 
 import com.tour.tour_management.dto.request.customer.CustomerCreateRequest;
 import com.tour.tour_management.dto.request.customer.CustomerUpdateRequest;
-import com.tour.tour_management.dto.response.account.GetAccountResponse;
 import com.tour.tour_management.dto.response.customer.CustomerResponse;
 import com.tour.tour_management.dto.response.customer.CustomerDetailResponse;
 import com.tour.tour_management.entity.Account;
@@ -17,6 +16,8 @@ import com.tour.tour_management.utils.StringUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,9 +33,13 @@ public class CustomerService {
     CustomerRepository customerRepository;
     CustomerMapper customerMapper;
 
-
+    /**
+     * Lấy danh sách khách hàng
+     *
+     * @return danh sách khách hàng
+     */
     public List<CustomerResponse> getCustomers(){
-        List<Customer> customerList =  customerRepository.findAll();
+        List<Customer> customerList =  customerRepository.findAllOrderedByDateTime();
         List<CustomerResponse> customerResponseList = new ArrayList<>();
         customerList.forEach(
                 customer -> {
@@ -43,24 +48,56 @@ public class CustomerService {
         return customerResponseList;
     }
 
+
+    /**
+     * Lấy khách hàng còn hoạt đông
+     *
+     * @return danh sách khách hàng còn còn hoạt động
+     */
+    @PreAuthorize("hasRole('ACCESS_CUSTOMER')")
+    public List<CustomerResponse> getActiveCustomers () {
+        Sort sort = Sort.by(Sort.Direction.DESC, "time");
+
+        List<Customer> customerList = customerRepository.findByStatusWithSorting(1,sort);
+        List<CustomerResponse> customerResponseList = new ArrayList<>();
+
+        customerList.forEach( customer ->{
+                customerResponseList.add(customerMapper.toCustomerResponse(customer));
+        });
+        return customerResponseList;
+    }
+
+    /**
+     * Lấy khách hàng đã bị xóa
+     *
+     * @return danh sách khách hàng dã bị xóa
+     */
+    @PreAuthorize("hasRole('ACCESS_CUSTOMER')")
+    public List<CustomerResponse> getDeletedCustomers () {
+        Sort sort = Sort.by(Sort.Direction.DESC, "time");
+
+        List<Customer> customerList = customerRepository.findByStatusWithSorting(0,sort);
+        List<CustomerResponse> customerResponseList = new ArrayList<>();
+
+        customerList.forEach( customer ->{
+            customerResponseList.add(customerMapper.toCustomerResponse(customer));
+        });
+        return customerResponseList;
+    }
+
+    /**
+     * Lấy khách hàng có thể là người đại diện
+     *
+     * @return danh sách dữ liệu khách hàng
+     */
     public List<CustomerResponse> getCustomersParent(){
-        List<Customer> customerList =  customerRepository.findAll();
+        List<Customer> customerList =  customerRepository.findAllOrderedByDateTime();
         List<CustomerResponse> customerResponseList = new ArrayList<>();
         customerList.forEach(
                 customer -> {
                     if(customer.getCustomer()==null) {
                         customerResponseList.add(customerMapper.toCustomerResponse(customer));
                     }
-                });
-        return customerResponseList;
-    }
-
-    public List<CustomerResponse> getDeletedCustomers(){
-        List<Customer> customerList =  customerRepository.findByStatus(0);
-        List<CustomerResponse> customerResponseList = new ArrayList<>();
-        customerList.forEach(
-                customer -> {
-                        customerResponseList.add(customerMapper.toCustomerResponse(customer));
                 });
         return customerResponseList;
     }
@@ -100,22 +137,24 @@ public class CustomerService {
         c.setCustomerGroup(customerResponses);
         return c;
     }
+
     public CustomerDetailResponse createCustomer(CustomerCreateRequest customerCreateRequest) {
         // check phone number
         if (customerRepository.existsByPhone_number(customerCreateRequest.getPhone_number())) {
             throw new AppException(CustomerErrorCode.CUSTOMER_PHONE_NUMBER_EXISTED);
         }
-
-        // chech customer relationship
-        Customer customerParent= null;
+        Customer customer = customerMapper.toCustomer(customerCreateRequest);
+        // check customer relationship
         if(customerCreateRequest.getCustomer_rel_id()!=null){
+            Customer customerParent= null;
             customerParent=customerRepository.findById(customerCreateRequest.getCustomer_rel_id()).orElseThrow(
                 () -> new  AppException(CustomerErrorCode.CUSTOMER_RELATIONSHIP_ID_DIDNT_EXIST)
             );
+            customer.setCustomer(customerParent);
         }
-
-        Customer customer = customerMapper.toCustomer(customerCreateRequest);
-        customer.setCustomer(customerParent);
+        else{
+            customer.setCustomer(null);
+        }
         customer.setStatus(1);
         LocalDateTime localDateTime = LocalDateTime.now();
         customer.setTime(localDateTime);
@@ -146,8 +185,11 @@ public class CustomerService {
             customerParent=customerRepository.findById(customerUpdateRequest.getCustomer_rel_id()).orElseThrow(
                 () -> new  AppException(CustomerErrorCode.CUSTOMER_RELATIONSHIP_ID_DIDNT_EXIST)
             );
+            customer.setCustomer(customerParent);
         }
-
+        else{
+            customer.setCustomer(null);
+        }
 
         customerMapper.updateCustomer(customer, customerUpdateRequest);
         return customerMapper.toCustomerDetailResponse(customerRepository.save(customer));

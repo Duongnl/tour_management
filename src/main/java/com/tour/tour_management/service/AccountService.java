@@ -5,7 +5,7 @@ import com.tour.tour_management.dto.request.account.EmployeeRequest;
 import com.tour.tour_management.dto.response.account.AccountResponse;
 import com.tour.tour_management.dto.response.account.EmployeeResponse;
 import com.tour.tour_management.dto.response.account.GetAccountResponse;
-import com.tour.tour_management.dto.response.tour.GetTourResponse;
+import com.tour.tour_management.dto.response.tour.TourDetailResponse;
 import com.tour.tour_management.entity.Account;
 import com.tour.tour_management.entity.Role;
 import com.tour.tour_management.exception.AccountErrorCode;

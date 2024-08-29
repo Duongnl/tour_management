@@ -4,7 +4,8 @@ import com.tour.tour_management.dto.request.airline.AirlineCreateRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 // tao get set hashcode euqual,...
 @Data
@@ -17,9 +18,9 @@ import java.util.Date;
 public class TourTimeCreateRequest {
     String tour_id;
     String time_name;
-    Date departure_time;
-    Date return_time;
-    Date visa_expire;
+    LocalDateTime departure_time;
+    LocalDateTime return_time;
+    LocalDate visa_expire;
     int quantity;
     int quantity_reserve;
     int quantity_sell;

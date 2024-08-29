@@ -35,4 +35,5 @@ public class TourCreateRequest {
 
     Set<TourTimeCreateRequest> tourTimes;
 
+    String url;
 }

@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class GetTourResponse {
+public class TourDetailResponse {
 
     String tour_id;
     String tour_name;

@@ -6,7 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Builder // tao builder de tao doi tuong nhanh
@@ -23,8 +23,8 @@ public class CustomerResponse {
     String phone_number;
     String email;
     String address;
-    Date birthday;
-    Date visa_expire;
+    LocalDate birthday;
+    LocalDate visa_expire;
     LocalDateTime time;
     int status;
 }

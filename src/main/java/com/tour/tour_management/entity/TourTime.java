@@ -8,7 +8,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -28,11 +29,11 @@ public class TourTime {
     Integer tour_time_id;
     String time_name;
     @Column(name = "departure_time", columnDefinition = "date")
-    Date departure_time;
+    LocalDateTime departure_time;
     @Column(name = "return_time", columnDefinition = "date")
-    Date return_time;
+    LocalDateTime return_time;
     @Column(name = "visa_expire", columnDefinition = "date")
-    Date visa_expire;
+    LocalDate visa_expire;
     int quantity;
     int quantity_reserve;
     int quantity_sell;
@@ -61,6 +62,7 @@ public class TourTime {
     @OneToMany(mappedBy = "tourTime", cascade = CascadeType.ALL)
     @JsonManagedReference
     Set<Reserve> reserves;
+
 
 
 

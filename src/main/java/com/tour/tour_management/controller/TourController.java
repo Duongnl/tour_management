@@ -2,17 +2,17 @@ package com.tour.tour_management.controller;
 
 import com.tour.tour_management.dto.request.tour.TourCreateRequest;
 import com.tour.tour_management.dto.request.tour.TourUpdateRequest;
+import com.tour.tour_management.dto.request.tourtime.TourTimeCreateRequest;
+import com.tour.tour_management.dto.request.tourtime.TourTimeUpdateRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
-import com.tour.tour_management.dto.response.tour.GetTourResponse;
+import com.tour.tour_management.dto.response.customer.CustomerDetailResponse;
 import com.tour.tour_management.dto.response.tour.TourResponse;
-import com.tour.tour_management.mapper.TourMapper;
-import com.tour.tour_management.repository.CategoryRepository;
+import com.tour.tour_management.dto.response.tour.TourDetailResponse;
 import com.tour.tour_management.service.TourService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,11 +23,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TourController {
-    TourService tourService;
 
-    TourMapper tourMapper;
-    @Autowired
-    CategoryRepository categoryRepository;
+    TourService tourService;
 
     @GetMapping
     public ApiResponse<List<TourResponse>> getTours() {
@@ -36,41 +33,79 @@ public class TourController {
                .build();
     }
 
-    @GetMapping("/getDeletedTours")
-    public ApiResponse<List<TourResponse>> getDeletedTours() {
+    @GetMapping("/active")
+    public  ApiResponse<List<TourResponse>> getActiveCustomers() {
+        return ApiResponse.<List<TourResponse>>builder()
+                .result( tourService.getActiveTours())
+                .build();
+    }
+
+    @GetMapping("/locked")
+    public  ApiResponse<List<TourResponse>> getDeletedCustomers() {
         return ApiResponse.<List<TourResponse>>builder()
                 .result( tourService.getDeletedTours())
                 .build();
     }
 
     @GetMapping("/{tour_id}")
-    public ApiResponse<GetTourResponse> getTour(@PathVariable Integer tour_id){
-        return ApiResponse.<GetTourResponse>builder()
+    public ApiResponse<TourDetailResponse> getTour(@PathVariable Integer tour_id){
+        return ApiResponse.<TourDetailResponse>builder()
                 .result(tourService.getTour(tour_id))
                 .build();
     }
 
-
     @PostMapping
-    public ApiResponse<TourResponse> createTour (@RequestBody @Valid TourCreateRequest tourCreateRequest) {
-       return ApiResponse.<TourResponse>builder()
+    public ApiResponse<TourDetailResponse> createTour (@RequestBody @Valid TourCreateRequest tourCreateRequest) {
+       return ApiResponse.<TourDetailResponse>builder()
                .result(tourService.createTour(tourCreateRequest))
+               .build();
+
+    }
+
+    @PostMapping("/{tour_id}")
+    public ApiResponse<TourDetailResponse> createTourTime (@PathVariable Integer tour_id, @RequestBody @Valid TourTimeCreateRequest tourTimeCreateRequest) {
+       return ApiResponse.<TourDetailResponse>builder()
+               .result(tourService.createTourTime(tour_id,tourTimeCreateRequest))
                .build();
 
     }
 
 
     @PutMapping("/{tour_id}")
-    public ApiResponse<TourResponse> updateTour (@PathVariable Integer tour_id, @RequestBody @Valid TourUpdateRequest tourUpdateRequest) {
-        return ApiResponse.<TourResponse>builder()
+    public ApiResponse<TourDetailResponse> updateTour (@PathVariable Integer tour_id, @RequestBody @Valid TourUpdateRequest tourUpdateRequest) {
+        return ApiResponse.<TourDetailResponse>builder()
                 .result(tourService.updateTour(tour_id ,tourUpdateRequest))
+                .build();
+    }
+    @PutMapping("/{tour_id}/{tourtime_id}")
+    public ApiResponse<TourDetailResponse> updateTourTime (@PathVariable Integer tour_id,@PathVariable Integer tourtime_id, @RequestBody @Valid TourTimeUpdateRequest tourTimeUpdateRequest) {
+        return ApiResponse.<TourDetailResponse>builder()
+                .result(tourService.updateTourTime(tour_id,tourtime_id ,tourTimeUpdateRequest))
                 .build();
     }
 
     @DeleteMapping("/{tour_id}")
-    public ApiResponse deleteTour (@PathVariable Integer tour_id){
-        tourService.deleteTour(tour_id);
-        return ApiResponse.builder()
+    public ApiResponse<TourDetailResponse> deleteTour (@PathVariable Integer tour_id){
+        return ApiResponse.<TourDetailResponse>builder()
+                .result(tourService.deleteTour(tour_id))
+                .build();
+    }
+
+    @DeleteMapping("/{tour_id}/{tourtime_id}")
+    public ApiResponse<TourDetailResponse> deleteTour (@PathVariable Integer tour_id,@PathVariable Integer tourtime_id){
+        return ApiResponse.<TourDetailResponse>builder()
+                .result(tourService.deleteTourTime(tour_id,tourtime_id))
+                .build();
+    }
+    @PutMapping ("/change-status/{tour_id}")
+    public  ApiResponse<TourDetailResponse> changeStatusTour(@PathVariable Integer tour_id ) {
+        return ApiResponse.<TourDetailResponse>builder()
+                .result(tourService.changeStatusTour(tour_id))
+                .build();
+    } @PutMapping ("/change-status/{tour_id}/{tourtime_id}")
+    public  ApiResponse<TourDetailResponse> changeStatusTourTime(@PathVariable Integer tour_id,@PathVariable Integer tourtime_id ) {
+        return ApiResponse.<TourDetailResponse>builder()
+                .result(tourService.changeStatusTourTime(tour_id,tourtime_id))
                 .build();
     }
 

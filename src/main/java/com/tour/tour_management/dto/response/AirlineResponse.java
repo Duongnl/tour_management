@@ -3,7 +3,7 @@ package com.tour.tour_management.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 // tao get set hashcode euqual,...
 @Data
@@ -18,7 +18,7 @@ public class AirlineResponse {
     String airline_id;
     String airline_name;
     String airline_detail;
-    LocalDateTime departure_time;
+    ZonedDateTime departure_time;
     int status;
 
 }

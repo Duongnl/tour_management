@@ -41,7 +41,6 @@ public class TourUpdateRequest {
 //    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
     Integer category_id;
 
-    Set<TourTimeUpdateRequest> tourTimes;
-
+    String url;
 }
 

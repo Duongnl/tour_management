@@ -32,6 +32,20 @@ public class CustomerController {
                 .build();
     }
 
+    @GetMapping("/active")
+    public  ApiResponse<List<CustomerResponse>> getActiveCustomers() {
+        return ApiResponse.<List<CustomerResponse>>builder()
+                .result( customerService.getActiveCustomers())
+                .build();
+    }
+
+    @GetMapping("/locked")
+    public  ApiResponse<List<CustomerResponse>> getDeletedCustomers() {
+        return ApiResponse.<List<CustomerResponse>>builder()
+                .result( customerService.getDeletedCustomers())
+                .build();
+    }
+
     @GetMapping("/parent")
     public  ApiResponse<List<CustomerResponse>> getCustomersParent() {
         return ApiResponse.<List<CustomerResponse>>builder()
