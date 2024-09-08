@@ -2,25 +2,29 @@ package com.tour.tour_management.service;
 
 import com.tour.tour_management.dto.request.tour.TourCreateRequest;
 import com.tour.tour_management.dto.request.tour.TourUpdateRequest;
-import com.tour.tour_management.dto.response.tour.GetTourResponse;
+import com.tour.tour_management.dto.request.tourtime.TourTimeRequest;
 import com.tour.tour_management.dto.response.tour.TourResponse;
-import com.tour.tour_management.entity.Category;
+import com.tour.tour_management.dto.response.tour.TourDetailResponse;
+import com.tour.tour_management.entity.*;
 import com.tour.tour_management.entity.Tour;
 import com.tour.tour_management.exception.AppException;
 import com.tour.tour_management.exception.CategoryErrorCode;
 import com.tour.tour_management.exception.TourErrorCode;
+import com.tour.tour_management.exception.TourTimeErrorCode;
 import com.tour.tour_management.mapper.TourMapper;
 import com.tour.tour_management.repository.AirlineRepository;
 import com.tour.tour_management.repository.CategoryRepository;
 import com.tour.tour_management.repository.TourRepository;
-import jakarta.transaction.Transactional;
+import com.tour.tour_management.repository.TourTimeRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 // thay the autowired va tu tao private final,
 @RequiredArgsConstructor
@@ -32,89 +36,217 @@ public class TourService {
     CategoryRepository categoryRepository;
     TourMapper tourMapper;
     AirlineRepository airlineRepository;
+    TourTimeRepository tourTimeRepository;
 
+    public TourDetailResponse getTour(int tour_id) {
+        Tour tour = tourRepository.findById(tour_id)
+                .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
+        return tourMapper.toTourDetailResponse(tourSorted(tour));
+    }
 
-    public List<TourResponse> getTours(){
+    public List<TourResponse> getTours() {
         List<Tour> tourList = tourRepository.findAll();
         List<TourResponse> tourResponseList = new ArrayList<>();
-        tourList.forEach( tour ->{
-                tourResponseList.add(tourMapper.toTourResponse(tour));
+        tourList.forEach(tour -> {
+            tourResponseList.add(tourMapper.toTourResponse(tourSorted(tour)));
         });
         return tourResponseList;
     }
 
-    public List<TourResponse> getDeletedTours(){
-        List<Tour> tourList =  tourRepository.findByStatus(0);
+    public List<TourResponse> getToursCategory(Integer category_id, int active) {
+        List<Tour> tourList = tourRepository.findByCategoryId(category_id);
         List<TourResponse> tourResponseList = new ArrayList<>();
-        tourList.forEach( tour ->{
-                tourResponseList.add(tourMapper.toTourResponse(tour));
+        tourList.forEach(tour -> {
+            if (active == -1)
+                tourResponseList.add(tourMapper.toTourResponse(tourSorted(tour)));
+            else if (tour.getStatus() == active) {
+                tourResponseList.add(tourMapper.toTourResponse(tourSorted(tour)));
+            }
         });
         return tourResponseList;
     }
 
-    public GetTourResponse getTour(int tour_id){
-        return tourMapper.toGetTourResponse(tourRepository.findById(tour_id)
-                .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND)));
+    public List<TourResponse> getActiveTours() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "tour_id");
+
+        List<Tour> tourList = tourRepository.findByStatusWithSorting(1, sort);
+        List<TourResponse> tourResponseList = new ArrayList<>();
+
+        tourList.forEach(tour -> {
+            tourResponseList.add(tourMapper.toTourResponse(tourSorted(tour)));
+        });
+        return tourResponseList;
     }
 
+    public List<TourResponse> getDeletedTours() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "tour_id");
 
-    @Transactional
-    public TourResponse createTour(TourCreateRequest tourCreateRequest) {
+        List<Tour> tourList = tourRepository.findByStatusWithSorting(0, sort);
+        List<TourResponse> tourResponseList = new ArrayList<>();
+
+        tourList.forEach(tour -> {
+            tourResponseList.add(tourMapper.toTourResponse(tourSorted(tour)));
+        });
+        return tourResponseList;
+    }
+
+    public TourDetailResponse createTour(TourCreateRequest tourCreateRequest) {
         Category category = categoryRepository.findById(tourCreateRequest.getCategory_id())
-                .orElseThrow(()-> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
         Tour tour = tourMapper.toTour(tourCreateRequest);
-
         tour.setCategory(category);
         tour.setStatus(1);
 
-        tour.getTourTimes().forEach(tourTime -> {
+        Set<TourTime> tourTimes = new HashSet<>();
+
+        tourCreateRequest.getTourTimes().forEach(tourTimeRequest -> {
+            TourTime tourTime = tourMapper.toTourTime(tourTimeRequest);
+
             tourTime.setTour(tour);
-            tourTime.getDepartureAirline().setStatus(1);
-            tourTime.getReturnAirline().setStatus(1);
-            airlineRepository.save(tourTime.getDepartureAirline());
-            airlineRepository.save(tourTime.getReturnAirline());
+            tourTime.setStatus(1);
 
+            if (tourTimeRequest.getReturn_airline_id() != null) {
+                Airline airline = null;
+                airline = airlineRepository.findById(tourTimeRequest.getReturn_airline_id()).orElseThrow(
+                        () -> new AppException(TourErrorCode.TOUR_NOT_FOUND)
+                );
+                tourTime.setReturnAirline(airline);
+            } else {
+                tourTime.setReturnAirline(null);
+            }
+            if (tourTimeRequest.getDeparture_airline_id() != null) {
+                Airline airline = null;
+                airline = airlineRepository.findById(tourTimeRequest.getDeparture_airline_id()).orElseThrow(
+                        () -> new AppException(TourErrorCode.TOUR_NOT_FOUND)
+                );
+                tourTime.setDepartureAirline(airline);
+            } else {
+                tourTime.setDepartureAirline(null);
+            }
+
+            tourTimes.add(tourTime);
         });
-
-
-        return  tourMapper.toTourResponse(tourRepository.save(tour));
+        tour.setTourTimes(tourTimes);
+        tourRepository.save(tour);
+        return tourMapper.toTourDetailResponse((tourSorted(tour)));
     }
 
-    public TourResponse updateTour(int tour_id, TourUpdateRequest tourUpdateRequest){
+    public Tour tourSorted(@NotNull Tour tour) {
+        tour.setTourTimes(
+                tourTimeRepository.findAllOrderedByTourId(
+                        tour.getTour_id()
+                )
+        );
+        return tour;
+    }
 
-//        int quantity = tourUpdateRequest.getQuantity_sell() + tourUpdateRequest.getQuantity_reserve();
-//        if (tourUpdateRequest.getQuantity() < quantity){
-//            throw  new AppException(TourErrorCode.QUANTITY_ERROR);
-//        }
+    public TourDetailResponse createTourTime(int tour_id, TourTimeRequest tourTimeRequest) {
+        Tour tour = tourRepository.findById(tour_id)
+                .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
 
+        TourTime tourTime = new TourTime();
+        tourMapper.CreateTourTime(tourTime, tourTimeRequest);
+        tourTime.setTour(tour);
+        tourTime.setStatus(1);
+
+        if (tourTimeRequest.getReturn_airline_id() != null) {
+            Airline airline = null;
+            airline = airlineRepository.findById(tourTimeRequest.getReturn_airline_id()).orElseThrow(
+                    () -> new AppException(TourErrorCode.TOUR_NOT_FOUND)
+            );
+            tourTime.setReturnAirline(airline);
+        } else {
+            tourTime.setReturnAirline(null);
+        }
+
+        if (tourTimeRequest.getDeparture_airline_id() != null) {
+            Airline airline = null;
+            airline = airlineRepository.findById(tourTimeRequest.getDeparture_airline_id()).orElseThrow(
+                    () -> new AppException(TourErrorCode.TOUR_NOT_FOUND)
+            );
+            tourTime.setDepartureAirline(airline);
+        } else {
+            tourTime.setDepartureAirline(null);
+        }
+
+        tourTimeRepository.save(tourTime);
+        tour.getTourTimes().add(tourTime);
+        tourRepository.save(tour);
+
+        return tourMapper.toTourDetailResponse(tour);
+    }
+
+    public TourDetailResponse updateTourTime(int tour_id, int tourtime_id, TourTimeRequest tourTimeRequest) {
+        Tour tour = tourRepository.findById(tour_id)
+                .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
+
+
+        Set<TourTime> tourTimes = tour.getTourTimes();
+
+        AtomicBoolean tourTimeFound = new AtomicBoolean(false);
+        tourTimes.forEach(tourTime -> {
+            if (tourTime.getTour_time_id() == tourtime_id) {
+                tourTime.setTour(tour);
+                tourMapper.updateTourTime(tourTime, tourTimeRequest);
+                tourTimeFound.set(true);
+                tourTimeRepository.save(tourTime);
+            }
+        });
+        if (!tourTimeFound.get()) {
+            throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
+        }
+        return tourMapper.toTourDetailResponse(tour);
+    }
+
+    public TourDetailResponse updateTour(int tour_id, TourUpdateRequest tourUpdateRequest) {
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
 
         Category category = categoryRepository.findById(tourUpdateRequest.getCategory_id())
-                .orElseThrow(()-> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
-
+                .orElseThrow(() -> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
         tourMapper.updateTour(tour, tourUpdateRequest);
         tour.setCategory(category);
 
-        tour.getTourTimes().forEach(tourTime -> {
-            tourTime.setTour(tour);
-            tourTime.getDepartureAirline().setStatus(1);
-            tourTime.getReturnAirline().setStatus(1);
-            airlineRepository.save(tourTime.getDepartureAirline());
-            airlineRepository.save(tourTime.getReturnAirline());
-
-        });
-//        tour.setQuantity_left(
-//                tour.getQuantity() - (tour.getQuantity_sell() + tour.getQuantity_reserve())
-//        );
-
-        return tourMapper.toTourResponse(tourRepository.save(tour));
+        return tourMapper.toTourDetailResponse(tourSorted(tourRepository.save(tour)));
     }
 
-    public void deleteTour(int tour_id){
+    public TourDetailResponse changeStatusTour(Integer tour_id) {
         Tour tour = tourRepository.findById(tour_id)
-                .orElseThrow(()-> new AppException(TourErrorCode.TOUR_NOT_FOUND));
-        tourRepository.delete(tour);
+                .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
+
+        if (tour.getStatus() == 0) {
+            tour.setStatus(1);
+        } else {
+            tour.setStatus(0);
+        }
+        tourRepository.save(tour);
+        return tourMapper.toTourDetailResponse(tourSorted(tour));
+
     }
 
+    public TourDetailResponse changeStatusTourTime(Integer tour_id, Integer tourtime_id) {
+        Tour tour = tourRepository.findById(tour_id)
+                .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
+
+        Set<TourTime> tourTimes = tour.getTourTimes();
+
+        AtomicBoolean tourTimeFound = new AtomicBoolean(false);
+        tourTimes.forEach(tourTime -> {
+            if (tourTime.getTour_time_id() == tourtime_id) {
+                tourTime.setTour(tour);
+                if (tourTime.getStatus() == 0) {
+                    tourTime.setStatus(1);
+                } else {
+                    tourTime.setStatus(0);
+                }
+                tourTimeFound.set(true);
+                tourTimeRepository.save(tourTime);
+            }
+        });
+        if (!tourTimeFound.get()) {
+            throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
+        }
+        return tourMapper.toTourDetailResponse(tourSorted(tour));
+
+    }
 }

@@ -28,7 +28,6 @@ public class AuthenticationController {
 //    dang nhap, neu dung thi tao ra token
     @PostMapping("/token")
     public ApiResponse<AuthenticationResponse> authenticate (@RequestBody @Valid AuthenticationRequest authenticationRequest) {
-        System.out.println("hello");
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(authenticationService.authenticate(authenticationRequest))
                 .build();

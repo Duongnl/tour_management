@@ -104,6 +104,10 @@ public class GlobalExceptionHandler {
                 return  EmployeeErrorCode.valueOf(enumKey);
             case "PERMISSION" :
                 return  PermissionErrorCode.valueOf(enumKey);
+            case "CUSTOMER" :
+                return CustomerErrorCode.valueOf(enumKey);
+            case "GLOBAL":
+                return GlobalErrorCode.valueOf(enumKey);
             default:
                 return null;
         }
