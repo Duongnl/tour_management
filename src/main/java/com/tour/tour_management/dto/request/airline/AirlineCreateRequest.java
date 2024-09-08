@@ -20,7 +20,6 @@ public class AirlineCreateRequest {
     String airline_detail;
 
 //    @NotBlank(message = "AIRLINE_DEPARTURE_NOT_BLANK")
-ZonedDateTime departure_time;
 //    @NotBlank(message = "AIRLINE_RETURN_NOT_BLANK")
 
 }

@@ -13,10 +13,11 @@ import lombok.experimental.FieldDefaults;
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TourResponse {
-    String tour_id;
+    Integer tour_id;
     String tour_name;
     String tour_detail;
     int status;
-//    String category_id;
-//    String category_name;
+    Integer category_id;
+    String category_name;
+    String url;
 }

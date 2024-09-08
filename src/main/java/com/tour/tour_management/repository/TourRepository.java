@@ -16,12 +16,14 @@ import java.util.Optional;
 public interface TourRepository extends JpaRepository<Tour,Integer> {
     List<Tour> findByStatus (int status);
 
-    @Query("SELECT c FROM Tour c ORDER BY c.tour_id DESC")
-    List<Tour> findAllOrderedById();
 
 
     //lấy danh sách người dùng theo trang thái và sắp xếp
     @Query("SELECT c FROM Tour c WHERE c.status = ?1")
     List<Tour> findByStatusWithSorting(@Param("status") int status, Sort sort);
+
+    //lấy danh sách người dùng theo trang thái và sắp xếp
+    @Query("SELECT c FROM Tour c WHERE c.category.category_id = ?1")
+    List<Tour> findByCategoryId(@Param("category_id") int category_id);
 
 }

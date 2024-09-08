@@ -2,10 +2,8 @@ package com.tour.tour_management.controller;
 
 import com.tour.tour_management.dto.request.tour.TourCreateRequest;
 import com.tour.tour_management.dto.request.tour.TourUpdateRequest;
-import com.tour.tour_management.dto.request.tourtime.TourTimeCreateRequest;
-import com.tour.tour_management.dto.request.tourtime.TourTimeUpdateRequest;
+import com.tour.tour_management.dto.request.tourtime.TourTimeRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
-import com.tour.tour_management.dto.response.customer.CustomerDetailResponse;
 import com.tour.tour_management.dto.response.tour.TourResponse;
 import com.tour.tour_management.dto.response.tour.TourDetailResponse;
 import com.tour.tour_management.service.TourService;
@@ -30,6 +28,27 @@ public class TourController {
     public ApiResponse<List<TourResponse>> getTours() {
        return ApiResponse.<List<TourResponse>>builder()
                .result( tourService.getTours())
+               .build();
+    }
+
+    @GetMapping("/category/{category_id}")
+    public ApiResponse<List<TourResponse>> getToursCategory(@PathVariable Integer category_id) {
+       return ApiResponse.<List<TourResponse>>builder()
+               .result( tourService.getToursCategory(category_id,-1))
+               .build();
+    }
+
+    @GetMapping("/category/{category_id}/active")
+    public ApiResponse<List<TourResponse>> getToursCategoryActive(@PathVariable Integer category_id) {
+       return ApiResponse.<List<TourResponse>>builder()
+               .result( tourService.getToursCategory(category_id,1))
+               .build();
+    }
+
+    @GetMapping("/category/{category_id}/locked")
+    public ApiResponse<List<TourResponse>> getToursCategoryLocked(@PathVariable Integer category_id) {
+       return ApiResponse.<List<TourResponse>>builder()
+               .result( tourService.getToursCategory(category_id,0))
                .build();
     }
 
@@ -63,9 +82,9 @@ public class TourController {
     }
 
     @PostMapping("/{tour_id}")
-    public ApiResponse<TourDetailResponse> createTourTime (@PathVariable Integer tour_id, @RequestBody @Valid TourTimeCreateRequest tourTimeCreateRequest) {
+    public ApiResponse<TourDetailResponse> createTourTime (@PathVariable Integer tour_id, @RequestBody @Valid TourTimeRequest tourTimeRequest) {
        return ApiResponse.<TourDetailResponse>builder()
-               .result(tourService.createTourTime(tour_id,tourTimeCreateRequest))
+               .result(tourService.createTourTime(tour_id, tourTimeRequest))
                .build();
 
     }
@@ -78,31 +97,20 @@ public class TourController {
                 .build();
     }
     @PutMapping("/{tour_id}/{tourtime_id}")
-    public ApiResponse<TourDetailResponse> updateTourTime (@PathVariable Integer tour_id,@PathVariable Integer tourtime_id, @RequestBody @Valid TourTimeUpdateRequest tourTimeUpdateRequest) {
+    public ApiResponse<TourDetailResponse> updateTourTime (@PathVariable Integer tour_id,@PathVariable Integer tourtime_id, @RequestBody @Valid TourTimeRequest tourTimeRequest) {
         return ApiResponse.<TourDetailResponse>builder()
-                .result(tourService.updateTourTime(tour_id,tourtime_id ,tourTimeUpdateRequest))
+                .result(tourService.updateTourTime(tour_id,tourtime_id ,tourTimeRequest))
                 .build();
     }
 
-    @DeleteMapping("/{tour_id}")
-    public ApiResponse<TourDetailResponse> deleteTour (@PathVariable Integer tour_id){
-        return ApiResponse.<TourDetailResponse>builder()
-                .result(tourService.deleteTour(tour_id))
-                .build();
-    }
-
-    @DeleteMapping("/{tour_id}/{tourtime_id}")
-    public ApiResponse<TourDetailResponse> deleteTour (@PathVariable Integer tour_id,@PathVariable Integer tourtime_id){
-        return ApiResponse.<TourDetailResponse>builder()
-                .result(tourService.deleteTourTime(tour_id,tourtime_id))
-                .build();
-    }
     @PutMapping ("/change-status/{tour_id}")
     public  ApiResponse<TourDetailResponse> changeStatusTour(@PathVariable Integer tour_id ) {
         return ApiResponse.<TourDetailResponse>builder()
                 .result(tourService.changeStatusTour(tour_id))
                 .build();
-    } @PutMapping ("/change-status/{tour_id}/{tourtime_id}")
+    }
+
+    @PutMapping ("/change-status/{tour_id}/{tourtime_id}")
     public  ApiResponse<TourDetailResponse> changeStatusTourTime(@PathVariable Integer tour_id,@PathVariable Integer tourtime_id ) {
         return ApiResponse.<TourDetailResponse>builder()
                 .result(tourService.changeStatusTourTime(tour_id,tourtime_id))

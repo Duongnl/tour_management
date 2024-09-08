@@ -1,13 +1,10 @@
 package com.tour.tour_management.service;
 
 
-import com.tour.tour_management.dto.request.customer.CustomerCreateRequest;
-import com.tour.tour_management.dto.request.customer.CustomerUpdateRequest;
+import com.tour.tour_management.dto.request.customer.CustomerRequest;
 import com.tour.tour_management.dto.response.customer.CustomerResponse;
 import com.tour.tour_management.dto.response.customer.CustomerDetailResponse;
-import com.tour.tour_management.entity.Account;
 import com.tour.tour_management.entity.Customer;
-import com.tour.tour_management.exception.AccountErrorCode;
 import com.tour.tour_management.exception.AppException;
 import com.tour.tour_management.exception.CustomerErrorCode;
 import com.tour.tour_management.mapper.CustomerMapper;
@@ -138,17 +135,17 @@ public class CustomerService {
         return c;
     }
 
-    public CustomerDetailResponse createCustomer(CustomerCreateRequest customerCreateRequest) {
+    public CustomerDetailResponse createCustomer(CustomerRequest customerRequest) {
         // check phone number
-        if (customerRepository.existsByPhone_number(customerCreateRequest.getPhone_number())) {
+        if (customerRepository.existsByPhone_number(customerRequest.getPhone_number())) {
             throw new AppException(CustomerErrorCode.CUSTOMER_PHONE_NUMBER_EXISTED);
         }
-        Customer customer = customerMapper.toCustomer(customerCreateRequest);
+        Customer customer = customerMapper.toCustomer(customerRequest);
         // check customer relationship
-        if(customerCreateRequest.getCustomer_rel_id()!=null){
+        if(customerRequest.getCustomer_rel_id()!=null){
             Customer customerParent= null;
-            customerParent=customerRepository.findById(customerCreateRequest.getCustomer_rel_id()).orElseThrow(
-                () -> new  AppException(CustomerErrorCode.CUSTOMER_RELATIONSHIP_ID_DIDNT_EXIST)
+            customerParent=customerRepository.findById(customerRequest.getCustomer_rel_id()).orElseThrow(
+                () -> new  AppException(CustomerErrorCode.CUSTOMER_RELATIONSHIP_ID_NOT_FOUND)
             );
             customer.setCustomer(customerParent);
         }
@@ -163,17 +160,17 @@ public class CustomerService {
         return customerMapper.toCustomerDetailResponse(customerRepository.save(customer));
     }
 
-    public CustomerDetailResponse updateCustomer(String CUSTOMER_url , CustomerUpdateRequest customerUpdateRequest) {
+    public CustomerDetailResponse updateCustomer(String CUSTOMER_url , CustomerRequest customerRequest) {
 
         Customer customer = customerRepository.findById(StringUtils.getIdFromUrl(CUSTOMER_url))
                 .orElseThrow(() -> new AppException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
 
         // check phone number
-        if(customerUpdateRequest.getPhone_number()!=null){
+        if(customerRequest.getPhone_number()!=null){
             String oldPhoneNumber = customer.getPhone_number();
-            String newPhoneNumber = customerUpdateRequest.getPhone_number();
+            String newPhoneNumber = customerRequest.getPhone_number();
             if (!newPhoneNumber.equals(oldPhoneNumber))
-                if (customerRepository.existsByPhone_number(customerUpdateRequest.getPhone_number())) {
+                if (customerRepository.existsByPhone_number(customerRequest.getPhone_number())) {
                     throw new AppException(CustomerErrorCode.CUSTOMER_PHONE_NUMBER_EXISTED);
                 }
 
@@ -181,9 +178,9 @@ public class CustomerService {
 
         // check customer relationship
         Customer customerParent= null;
-        if(customerUpdateRequest.getCustomer_rel_id()!=null){
-            customerParent=customerRepository.findById(customerUpdateRequest.getCustomer_rel_id()).orElseThrow(
-                () -> new  AppException(CustomerErrorCode.CUSTOMER_RELATIONSHIP_ID_DIDNT_EXIST)
+        if(customerRequest.getCustomer_rel_id()!=null){
+            customerParent=customerRepository.findById(customerRequest.getCustomer_rel_id()).orElseThrow(
+                () -> new  AppException(CustomerErrorCode.CUSTOMER_RELATIONSHIP_ID_NOT_FOUND)
             );
             customer.setCustomer(customerParent);
         }
@@ -191,7 +188,7 @@ public class CustomerService {
             customer.setCustomer(null);
         }
 
-        customerMapper.updateCustomer(customer, customerUpdateRequest);
+        customerMapper.updateCustomer(customer, customerRequest);
         return customerMapper.toCustomerDetailResponse(customerRepository.save(customer));
     }
 

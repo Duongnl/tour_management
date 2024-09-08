@@ -10,5 +10,4 @@ import java.util.List;
 //String boi vi kieu du lieu cua category_id la integer
 public interface CategoryRepository extends JpaRepository<Category,Integer> {
     List<Category> findByStatus(int status);
-
 }

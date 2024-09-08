@@ -1,7 +1,7 @@
 package com.tour.tour_management.dto.response.tour;
 
 
-import com.tour.tour_management.dto.response.TourTimeResponse;
+import com.tour.tour_management.dto.response.tourtime.TourTimeResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,12 +17,12 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TourDetailResponse {
 
-    String tour_id;
+    Integer tour_id;
     String tour_name;
     String tour_detail;
     int status;
-    String category_id;
+    Integer category_id;
     String category_name;
-
     Set<TourTimeResponse> tourTimes;
+    String url;
 }

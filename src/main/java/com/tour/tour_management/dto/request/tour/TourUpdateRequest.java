@@ -1,11 +1,10 @@
 package com.tour.tour_management.dto.request.tour;
 
 
-import com.tour.tour_management.dto.request.tourtime.TourTimeUpdateRequest;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
+import jakarta.validation.constraints.NotBlank;
 
 // tao get set hashcode euqual,...
 @Data
@@ -17,9 +16,11 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TourUpdateRequest {
 
-//    @NotBlank(message = "TOUR_NAME_NOT_BLANK")
-
+    @Pattern(regexp = "^(?=(.*\\p{L}){2,})[\\p{L} ]{2,255}",message ="TOUR_NAME_INVALID" )
+    @NotBlank(message = "TOUR_NAME_NOT_BLANK")
     String tour_name;
+
+    @Pattern(regexp = "^[\\p{L}0-9 ,.\\-]{0,255}",message ="TOUR_DETAIL_INVALID" )
     String tour_detail;
 
 //    @Min(value = 0, message = "TOUR_QUANTITY_MIN_INVALID")
@@ -38,9 +39,10 @@ public class TourUpdateRequest {
 //    @Max(value = 2100000000, message = "TOUR_PRICE_MAX_INVALID")
 //    int price;
 
-//    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
+    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
     Integer category_id;
 
+    @Pattern(regexp = "^[a-zA-Z\\-]+$", message = "TOUR_URL_INVALID")
     String url;
 }
 

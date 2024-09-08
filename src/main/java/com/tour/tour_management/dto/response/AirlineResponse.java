@@ -14,11 +14,9 @@ import java.time.ZonedDateTime;
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AirlineResponse {
-
-    String airline_id;
+    Integer airline_id;
     String airline_name;
     String airline_detail;
-    ZonedDateTime departure_time;
     int status;
 
 }

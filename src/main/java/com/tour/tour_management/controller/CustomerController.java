@@ -1,12 +1,9 @@
 package com.tour.tour_management.controller;
 
-import com.tour.tour_management.dto.request.customer.CustomerCreateRequest;
-import com.tour.tour_management.dto.request.customer.CustomerUpdateRequest;
+import com.tour.tour_management.dto.request.customer.CustomerRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
-import com.tour.tour_management.dto.response.account.GetAccountResponse;
 import com.tour.tour_management.dto.response.customer.CustomerDetailResponse;
 import com.tour.tour_management.dto.response.customer.CustomerResponse;
-import com.tour.tour_management.entity.Customer;
 import com.tour.tour_management.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -69,17 +66,17 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ApiResponse<CustomerDetailResponse> createCustomer (@RequestBody @Valid CustomerCreateRequest customerCreateRequest) {
+    public ApiResponse<CustomerDetailResponse> createCustomer (@RequestBody @Valid CustomerRequest customerRequest) {
         return ApiResponse.<CustomerDetailResponse>builder()
-                .result(customerService.createCustomer(customerCreateRequest))
+                .result(customerService.createCustomer(customerRequest))
                 .build();
     }
 
     @PutMapping("/{customer_url}")
     public ApiResponse<CustomerDetailResponse> updateCustomer (@PathVariable String customer_url
-            ,@RequestBody @Valid CustomerUpdateRequest customerUpdateRequest){
+            ,@RequestBody @Valid CustomerRequest customerRequest){
         return ApiResponse.<CustomerDetailResponse>builder()
-                .result(customerService.updateCustomer(customer_url,customerUpdateRequest))
+                .result(customerService.updateCustomer(customer_url,customerRequest))
                 .build();
     }
 

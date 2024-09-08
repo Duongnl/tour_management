@@ -32,6 +32,12 @@ public class TourTime {
     LocalDateTime departure_time;
     @Column(name = "return_time", columnDefinition = "date")
     LocalDateTime return_time;
+
+    @Column(name = "departure_date", columnDefinition = "date")
+    LocalDate departure_date;
+    @Column(name = "return_date", columnDefinition = "date")
+    LocalDate return_date;
+
     @Column(name = "visa_expire", columnDefinition = "date")
     LocalDate visa_expire;
     int quantity;
@@ -49,20 +55,19 @@ public class TourTime {
 
     @ManyToOne
     @JoinColumn(name = "departure_airline_id", nullable = false, referencedColumnName = "airline_id")
-    @JsonIgnoreProperties("departureTourTimes")
-//    @JsonBackReference
+//    @JsonIgnoreProperties("departureTourTimes")
+    @JsonBackReference
     Airline departureAirline;
 
     @ManyToOne
     @JoinColumn(name = "return_airline_id", nullable = false, referencedColumnName = "airline_id")
-//    @JsonBackReference
-    @JsonIgnoreProperties("returnTourTimes")
+    @JsonBackReference
+//    @JsonIgnoreProperties("returnTourTimes")
     Airline returnAirline;
 
     @OneToMany(mappedBy = "tourTime", cascade = CascadeType.ALL)
     @JsonManagedReference
     Set<Reserve> reserves;
-
 
 
 
