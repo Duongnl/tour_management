@@ -28,7 +28,7 @@ public class Reserve {
     int price_min;
     int commission;
     int pay;
-    ZonedDateTime time;
+    LocalDateTime time;
     int status;
 
 

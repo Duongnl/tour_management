@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,5 +27,17 @@ public interface TourRepository extends JpaRepository<Tour,Integer> {
     //lấy danh sách người dùng theo trang thái và sắp xếp
     @Query("SELECT c FROM Tour c WHERE c.category.category_id = ?1")
     List<Tour> findByCategoryId(@Param("category_id") int category_id);
+
+//    SELECT * FROM tour JOIN tour_time ON tour.tour_id = tour_time.tour_id
+//    WHERE tour_time.departure_date >= '2024-08-24' AND tour_time.departure_date <= '2024-09-07'
+//    @Query("SELECT Tour FROM Tour JOIN Tour.tourTimes WHERE tourTimes.departure_date >= '2024-08-24' AND tourTimes.departure_date <= '2024-09-07'")
+@Query("SELECT t FROM Tour t JOIN t.tourTimes tt WHERE tt.departure_date BETWEEN :startDay AND :endDay")
+List<Tour> daysFilterReserveTours(@Param("startDay") LocalDate startDay, @Param("endDay") LocalDate endDay);
+
+@Query ("SELECT t FROM Tour t WHERE t.category.category_id = ?1")
+List <Tour> categoryFilterReserveTours (Integer category_id);
+
+    @Query("SELECT t FROM Tour t JOIN t.tourTimes tt WHERE t.category.category_id = :category_id AND tt.departure_date BETWEEN :startDay AND :endDay")
+    List <Tour> filterReserveTours (@Param("category_id")  Integer category_id,@Param("startDay") LocalDate startDay, @Param("endDay") LocalDate endDay);
 
 }

@@ -33,4 +33,5 @@ public interface TourMapper {
      void CreateTourTime(@MappingTarget TourTime tourTime, TourTimeRequest tourTimeRequest);
      TourTime toTourTime(TourTimeRequest tourTimeRequest);
      //     void createTour(@MappingTarget  Tour tour, TourRequest tourRequest);
+
 }
