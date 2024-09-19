@@ -1,6 +1,7 @@
 package com.tour.tour_management.dto.request.tour;
 
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -39,7 +40,7 @@ public class TourUpdateRequest {
 //    @Max(value = 2100000000, message = "TOUR_PRICE_MAX_INVALID")
 //    int price;
 
-    @NotBlank(message = "TOUR_CATEGORY_ID_NOT_BLANK")
+    @NotNull
     Integer category_id;
 
     @Pattern(regexp = "^[a-zA-Z\\-]+$", message = "TOUR_URL_INVALID")

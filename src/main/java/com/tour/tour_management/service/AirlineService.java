@@ -33,6 +33,16 @@ public class AirlineService {
         return airlineResponseList;
     }
 
+    public List<AirlineResponse> getAirlines(int status)  {
+        List<Airline> airlineList = airlineRepository.findAll();
+        List<AirlineResponse> airlineResponseList = new ArrayList<>();
+        airlineList.forEach(airline -> {
+            if(airline.getStatus()==status)
+            airlineResponseList.add(airlineMapper.toAirlineResponse(airline));
+        });
+        return airlineResponseList;
+    }
+
     public AirlineResponse createAirline (AirlineCreateRequest airlineCreateRequest) {
 //        kiểm tra  xem thời gian xuất phát có trước thời gian bay hay không
 //        if (airlineRequest.getDeparture_time().isAfter(airlineRequest.getReturn_time())) {

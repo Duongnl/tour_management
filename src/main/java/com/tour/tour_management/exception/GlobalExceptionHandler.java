@@ -106,8 +106,8 @@ public class GlobalExceptionHandler {
                 return  PermissionErrorCode.valueOf(enumKey);
             case "CUSTOMER" :
                 return CustomerErrorCode.valueOf(enumKey);
-            case "GLOBAL":
-                return GlobalErrorCode.valueOf(enumKey);
+            case "TIME":
+                return TourTimeErrorCode.valueOf(enumKey);
             default:
                 return null;
         }
