@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -28,11 +30,17 @@ public class TourTime {
     Integer tour_time_id;
     String time_name;
     @Column(name = "departure_time", columnDefinition = "date")
-    Date departure_time;
+    LocalDateTime departure_time;
     @Column(name = "return_time", columnDefinition = "date")
-    Date return_time;
+    LocalDateTime return_time;
+
+    @Column(name = "departure_date", columnDefinition = "date")
+    LocalDate departure_date;
+    @Column(name = "return_date", columnDefinition = "date")
+    LocalDate return_date;
+
     @Column(name = "visa_expire", columnDefinition = "date")
-    Date visa_expire;
+    LocalDate visa_expire;
     int quantity;
     int quantity_reserve;
     int quantity_sell;
@@ -48,14 +56,14 @@ public class TourTime {
 
     @ManyToOne
     @JoinColumn(name = "departure_airline_id", nullable = false, referencedColumnName = "airline_id")
-    @JsonIgnoreProperties("departureTourTimes")
-//    @JsonBackReference
+//    @JsonIgnoreProperties("departureTourTimes")
+    @JsonBackReference
     Airline departureAirline;
 
     @ManyToOne
     @JoinColumn(name = "return_airline_id", nullable = false, referencedColumnName = "airline_id")
-//    @JsonBackReference
-    @JsonIgnoreProperties("returnTourTimes")
+    @JsonBackReference
+//    @JsonIgnoreProperties("returnTourTimes")
     Airline returnAirline;
 
     @OneToMany(mappedBy = "tourTime", cascade = CascadeType.ALL)

@@ -2,9 +2,12 @@ package com.tour.tour_management.mapper;
 
 import com.tour.tour_management.dto.request.tour.TourCreateRequest;
 import com.tour.tour_management.dto.request.tour.TourUpdateRequest;
+import com.tour.tour_management.dto.response.reserve.ReserveTourResponse;
+import com.tour.tour_management.dto.response.reserve.ReserveTourTimeResponse;
 import com.tour.tour_management.dto.response.tour.GetTourResponse;
 import com.tour.tour_management.dto.response.tour.TourResponse;
 import com.tour.tour_management.entity.Tour;
+import com.tour.tour_management.entity.TourTime;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -26,4 +29,5 @@ public interface TourMapper {
 
      void updateTour(@MappingTarget Tour tour, TourUpdateRequest tourUpdateRequest);
      //     void createTour(@MappingTarget  Tour tour, TourRequest tourRequest);
+
 }

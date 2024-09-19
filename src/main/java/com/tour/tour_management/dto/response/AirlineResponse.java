@@ -15,10 +15,9 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AirlineResponse {
 
-    String airline_id;
+    Integer airline_id;
     String airline_name;
     String airline_detail;
-    LocalDateTime departure_time;
     int status;
 
 }

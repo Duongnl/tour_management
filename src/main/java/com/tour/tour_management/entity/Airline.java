@@ -27,7 +27,6 @@ public class Airline {
     Integer airline_id;
     String airline_name;
     String airline_detail;
-    ZonedDateTime departure_time;
     int status;
 
     @OneToMany(mappedBy = "departureAirline", cascade = CascadeType.ALL)

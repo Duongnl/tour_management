@@ -1,7 +1,6 @@
 package com.tour.tour_management.mapper;
 
 import com.tour.tour_management.dto.request.category.CategoryRequest;
-import com.tour.tour_management.dto.request.category.CategoryUpdateRequest;
 import com.tour.tour_management.dto.response.category.CategoryResponse;
 import com.tour.tour_management.dto.response.category.GetCategoryResponse;
 import com.tour.tour_management.entity.Category;

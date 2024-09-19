@@ -2,15 +2,10 @@ package com.tour.tour_management.service;
 
 
 import com.tour.tour_management.dto.request.category.CategoryRequest;
-import com.tour.tour_management.dto.request.category.CategoryUpdateRequest;
 import com.tour.tour_management.dto.response.category.CategoryResponse;
-import com.tour.tour_management.dto.response.category.GetCategoryResponse;
-import com.tour.tour_management.dto.response.role.RoleResponse;
 import com.tour.tour_management.entity.Category;
-import com.tour.tour_management.entity.Role;
 import com.tour.tour_management.exception.AppException;
 import com.tour.tour_management.exception.CategoryErrorCode;
-import com.tour.tour_management.exception.RoleErrorCode;
 import com.tour.tour_management.mapper.CategoryMapper;
 import com.tour.tour_management.repository.CategoryRepository;
 import com.tour.tour_management.utils.StringUtils;

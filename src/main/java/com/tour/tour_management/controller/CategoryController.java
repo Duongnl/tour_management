@@ -1,11 +1,8 @@
 package com.tour.tour_management.controller;
 
 import com.tour.tour_management.dto.request.category.CategoryRequest;
-import com.tour.tour_management.dto.request.category.CategoryUpdateRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
 import com.tour.tour_management.dto.response.category.CategoryResponse;
-import com.tour.tour_management.dto.response.category.GetCategoryResponse;
-import com.tour.tour_management.dto.response.role.RoleResponse;
 import com.tour.tour_management.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
