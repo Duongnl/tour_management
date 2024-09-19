@@ -23,7 +23,7 @@ public class History {
     @GeneratedValue(strategy = GenerationType.UUID)
     String history_id;
     String history_detail;
-    ZonedDateTime time;
+    LocalDateTime time;
     int status;
 
     @ManyToOne
