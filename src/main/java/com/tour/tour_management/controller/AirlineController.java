@@ -28,6 +28,18 @@ public class AirlineController {
                 .build();
     }
 
+    @GetMapping("/active")
+    public ApiResponse<List<AirlineResponse>> getAirlinesActive (){
+        return ApiResponse.<List<AirlineResponse>>builder()
+                .result(airlineService.getAirlines(1))
+                .build();
+    }@GetMapping("/locked")
+    public ApiResponse<List<AirlineResponse>> getAirlinesLocked (){
+        return ApiResponse.<List<AirlineResponse>>builder()
+                .result(airlineService.getAirlines(0))
+                .build();
+    }
+
     @PostMapping
     public ApiResponse<AirlineResponse> createAirline(@RequestBody @Valid AirlineCreateRequest airlineCreateRequest){
         return ApiResponse.<AirlineResponse>builder()

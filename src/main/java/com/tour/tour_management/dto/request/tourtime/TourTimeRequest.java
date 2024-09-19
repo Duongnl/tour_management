@@ -18,7 +18,7 @@ import java.time.LocalDate;
 public class TourTimeRequest {
 
     @NotBlank(message = "TIME_NAME_NOT_BLANK")
-    @Pattern(regexp = "^(?=(.*\\p{L}){2,})[\\p{L} ]{2,255}",message ="TIME_NAME_INVALID" )
+    @Pattern(regexp = "^(?=(.*\\p{L}){2,})[\\p{L}\\p{N} ]{2,255}$",message ="TIME_NAME_INVALID" )
     String time_name;
 
     @NotNull(message = "TIME_DEPARTURE_TIME_INVALID")
