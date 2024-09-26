@@ -1,5 +1,6 @@
 package com.tour.tour_management.service;
 
+import com.tour.tour_management.dto.request.history.HistoryRequest;
 import com.tour.tour_management.dto.request.tour.TourCreateRequest;
 import com.tour.tour_management.dto.request.tour.TourUpdateRequest;
 import com.tour.tour_management.dto.request.tourtime.TourTimeRequest;
@@ -37,6 +38,7 @@ public class TourService {
     TourMapper tourMapper;
     AirlineRepository airlineRepository;
     TourTimeRepository tourTimeRepository;
+    HistoryService historyService;
 
     public TourDetailResponse getTour(int tour_id) {
         Tour tour = tourRepository.findById(tour_id)
@@ -78,7 +80,7 @@ public class TourService {
         return tourResponseList;
     }
 
-    public List<TourResponse> getDeletedTours() {
+    public List<TourResponse> getLockedTours() {
         Sort sort = Sort.by(Sort.Direction.DESC, "tour_id");
 
         List<Tour> tourList = tourRepository.findByStatusWithSorting(0, sort);
@@ -127,7 +129,8 @@ public class TourService {
             tourTimes.add(tourTime);
         });
         tour.setTourTimes(tourTimes);
-        tourRepository.save(tour);
+        Tour tourSaved =tourRepository.save(tour);
+        historyService.createHistory(new HistoryRequest("Create-tour " + tourSaved.getTour_id()));
         return tourMapper.toTourDetailResponse((tourSorted(tour)));
     }
 
@@ -171,12 +174,12 @@ public class TourService {
 
         tourTimeRepository.save(tourTime);
         tour.getTourTimes().add(tourTime);
-        tourRepository.save(tour);
-
-        return tourMapper.toTourDetailResponse(tour);
+        Tour tourSaved=tourRepository.save(tour);
+        historyService.createHistory(new HistoryRequest("Create tour time: tour "+tour_id+" tour time " + tourTime.getTour_time_id()));
+        return tourMapper.toTourDetailResponse(tourSaved);
     }
 
-    public TourDetailResponse updateTourTime(int tour_id, int tourtime_id, TourTimeRequest tourTimeRequest) {
+    public TourDetailResponse updateTourTime(int tour_id, int tour_time_id, TourTimeRequest tourTimeRequest) {
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
 
@@ -185,7 +188,7 @@ public class TourService {
 
         AtomicBoolean tourTimeFound = new AtomicBoolean(false);
         tourTimes.forEach(tourTime -> {
-            if (tourTime.getTour_time_id() == tourtime_id) {
+            if (tourTime.getTour_time_id() == tour_time_id) {
                 tourTime.setTour(tour);
                 tourMapper.updateTourTime(tourTime, tourTimeRequest);
                 tourTimeFound.set(true);
@@ -195,6 +198,7 @@ public class TourService {
         if (!tourTimeFound.get()) {
             throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
         }
+        historyService.createHistory(new HistoryRequest("Update tour time: tour  "+tour_id+" tour_time "+tour_time_id));
         return tourMapper.toTourDetailResponse(tour);
     }
 
@@ -206,8 +210,9 @@ public class TourService {
                 .orElseThrow(() -> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
         tourMapper.updateTour(tour, tourUpdateRequest);
         tour.setCategory(category);
-
-        return tourMapper.toTourDetailResponse(tourSorted(tourRepository.save(tour)));
+        Tour tourSaved=tourRepository.save(tour);
+        historyService.createHistory(new HistoryRequest("Update tour "+tour_id));
+        return tourMapper.toTourDetailResponse(tourSorted(tourSaved));
     }
 
     public TourDetailResponse changeStatusTour(Integer tour_id) {
@@ -219,7 +224,8 @@ public class TourService {
         } else {
             tour.setStatus(0);
         }
-        tourRepository.save(tour);
+        Tour tourSaved=tourRepository.save(tour);
+        historyService.createHistory(new HistoryRequest("change status tour  "+tourSaved.getTour_id()));
         return tourMapper.toTourDetailResponse(tourSorted(tour));
 
     }
@@ -232,7 +238,7 @@ public class TourService {
 
         AtomicBoolean tourTimeFound = new AtomicBoolean(false);
         tourTimes.forEach(tourTime -> {
-            if (tourTime.getTour_time_id() == tourtime_id) {
+            if (tourTime.getTour_time_id().equals(tourtime_id)) {
                 tourTime.setTour(tour);
                 if (tourTime.getStatus() == 0) {
                     tourTime.setStatus(1);
@@ -246,6 +252,7 @@ public class TourService {
         if (!tourTimeFound.get()) {
             throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
         }
+        historyService.createHistory(new HistoryRequest("Change status tour time  "+tour_id+" tour_time_id "+tourtime_id));
         return tourMapper.toTourDetailResponse(tourSorted(tour));
 
     }
