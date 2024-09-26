@@ -2,6 +2,7 @@ package com.tour.tour_management.service;
 
 
 import com.tour.tour_management.dto.request.customer.CustomerRequest;
+import com.tour.tour_management.dto.request.history.HistoryRequest;
 import com.tour.tour_management.dto.response.customer.CustomerResponse;
 import com.tour.tour_management.dto.response.customer.CustomerDetailResponse;
 import com.tour.tour_management.entity.Customer;
@@ -29,6 +30,7 @@ import java.util.*;
 public class CustomerService {
     CustomerRepository customerRepository;
     CustomerMapper customerMapper;
+    HistoryService historyService;
 
     /**
      * Lấy danh sách khách hàng
@@ -70,7 +72,7 @@ public class CustomerService {
      * @return danh sách khách hàng dã bị xóa
      */
     @PreAuthorize("hasRole('ACCESS_CUSTOMER')")
-    public List<CustomerResponse> getDeletedCustomers () {
+    public List<CustomerResponse> getLockedCustomers () {
         Sort sort = Sort.by(Sort.Direction.DESC, "time");
 
         List<Customer> customerList = customerRepository.findByStatusWithSorting(0,sort);
@@ -157,7 +159,9 @@ public class CustomerService {
         customer.setTime(localDateTime);
 
         customer.setCustomer_name(customer.getCustomer_name());
-        return customerMapper.toCustomerDetailResponse(customerRepository.save(customer));
+        Customer customerSaved=customerRepository.save(customer);
+        historyService.createHistory(new HistoryRequest("create customer: "+customerSaved.getCustomer_id()));
+        return customerMapper.toCustomerDetailResponse(customerSaved);
     }
 
     public CustomerDetailResponse updateCustomer(String CUSTOMER_url , CustomerRequest customerRequest) {
@@ -189,34 +193,11 @@ public class CustomerService {
         }
 
         customerMapper.updateCustomer(customer, customerRequest);
-        return customerMapper.toCustomerDetailResponse(customerRepository.save(customer));
+        Customer customerSaved=customerRepository.save(customer);
+        historyService.createHistory(new HistoryRequest("update customer: "+customerSaved.getCustomer_id()));
+        return customerMapper.toCustomerDetailResponse(customerSaved);
     }
 
-    public CustomerResponse undoCustomer(String customer_url) {
-        if (StringUtils.getIdFromUrl(customer_url) == -1) {
-            throw new AppException(CustomerErrorCode.CUSTOMER_NOT_FOUND);
-        }
-
-        Customer customer = customerRepository.findById(StringUtils.getIdFromUrl(customer_url))
-                .orElseThrow(() -> new AppException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
-        // hiển thị lại các tour trong danh mục đó
-        
-        // hiển thị lại tour
-        customer.setStatus(1);
-        return customerMapper.toCustomerResponse(customerRepository.save(customer));
-    }
-    
-    public CustomerResponse deleteCustomer(String CUSTOMER_url) {
-        if (StringUtils.getIdFromUrl(CUSTOMER_url) == -1) {
-            throw new AppException(CustomerErrorCode.CUSTOMER_NOT_FOUND);
-        }
-
-        Customer customer = customerRepository.findById(StringUtils.getIdFromUrl(CUSTOMER_url))
-                .orElseThrow(() -> new AppException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
-
-        customer.setStatus(0);
-        return customerMapper.toCustomerResponse(customerRepository.save(customer));
-    }
     public CustomerDetailResponse changeStatus (String customer_url) {
         if (StringUtils.getIdFromUrl(customer_url) == -1) {
             throw new AppException(CustomerErrorCode.CUSTOMER_NOT_FOUND);
@@ -230,6 +211,9 @@ public class CustomerService {
         } else {
             customer.setStatus(0);
         }
-        return customerMapper.toCustomerDetailResponse(customerRepository.save(customer));
+        Customer customerSaved=customerRepository.save(customer);
+        historyService.createHistory(new HistoryRequest("change status customer: "+customerSaved.getCustomer_id()));
+
+        return customerMapper.toCustomerDetailResponse(customerSaved);
     }
 }

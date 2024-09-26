@@ -37,9 +37,9 @@ public class CustomerController {
     }
 
     @GetMapping("/locked")
-    public  ApiResponse<List<CustomerResponse>> getDeletedCustomers() {
+    public  ApiResponse<List<CustomerResponse>> getLockedCustomers() {
         return ApiResponse.<List<CustomerResponse>>builder()
-                .result( customerService.getDeletedCustomers())
+                .result( customerService.getLockedCustomers())
                 .build();
     }
 
@@ -50,13 +50,7 @@ public class CustomerController {
                 .build();
     }
 
-//    getDeletedCategories
-    @GetMapping("/getDeletedCategories")
-    public  ApiResponse<List<CustomerResponse>> getDeletedCategories() {
-    return ApiResponse.<List<CustomerResponse>>builder()
-            .result( customerService.getDeletedCustomers())
-            .build();
-    }
+
 
     @GetMapping("/{customer_url}")
     public  ApiResponse<CustomerDetailResponse> getCustomer(@PathVariable String customer_url) {
@@ -80,19 +74,6 @@ public class CustomerController {
                 .build();
     }
 
-    @PutMapping("/undoCustomer/{customer_url}")
-    public ApiResponse<CustomerResponse> undoCustomer (@PathVariable String customer_url){
-        return ApiResponse.<CustomerResponse>builder()
-                .result(customerService.undoCustomer(customer_url))
-                .build();
-    }
-
-    @DeleteMapping("/{customer_url}")
-    public ApiResponse deleteCustomer (@PathVariable String customer_url) {
-        return ApiResponse.builder()
-                .result( customerService.deleteCustomer(customer_url))
-                .build();
-    }
     @PutMapping ("/change-status/{customer_url}")
     public  ApiResponse<CustomerDetailResponse> changeStatus(@PathVariable String customer_url ) {
         return ApiResponse.<CustomerDetailResponse>builder()

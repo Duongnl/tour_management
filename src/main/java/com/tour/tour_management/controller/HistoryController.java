@@ -30,6 +30,13 @@ public class HistoryController {
                 .build();
     }
 
+    @GetMapping("/order-by-time")
+    public ApiResponse<List<HistoryResponse>> getHistoresOrderByTime(){
+        return ApiResponse.<List<HistoryResponse>>builder()
+                .result(historyService.getHistoriesOrderedByDateTime())
+                .build();
+    }
+
     @PostMapping("/find-history-byTime")
     public ApiResponse<List<HistoryResponse>> getHistoriesByDate(@RequestBody @Valid HistoryDateRequest historyDateRequest)
     {
