@@ -28,7 +28,8 @@ public class ReserveTourFilterRequest {
 
     Boolean date_filter;
 
-    @Pattern(regexp = "^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$", message = "CATEGORY_URL_INVALID")
+    @Pattern(regexp = "^(?:[a-zA-Z0-9\\s]+(?:-[a-zA-Z0-9\\s]+)*)?$", message = "CATEGORY_URL_INVALID")
     String category_slug;
+
 
 }

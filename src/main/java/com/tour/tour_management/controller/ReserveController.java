@@ -2,9 +2,12 @@ package com.tour.tour_management.controller;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.tour.tour_management.dto.request.reserve.ReserveRequests;
 import com.tour.tour_management.dto.request.reserve.ReserveTourFilterRequest;
 import com.tour.tour_management.dto.response.ApiResponse;
+import com.tour.tour_management.dto.response.category.CategoryResponse;
 import com.tour.tour_management.dto.response.reserve.ReserveTourResponse;
+import com.tour.tour_management.entity.Reserve;
 import com.tour.tour_management.service.ReserveService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -25,7 +28,7 @@ public class ReserveController {
     @GetMapping("/tour")
     public ApiResponse<List<ReserveTourResponse>> getReserveTour () {
         return ApiResponse.<List<ReserveTourResponse>>builder()
-                .result(reserveService.getReserveTour())
+                .result(reserveService.getReserveTours())
                 .build();
     }
 
@@ -34,6 +37,21 @@ public class ReserveController {
         System.out.println("Filter : " + reserveTourFilterRequest);
         return ApiResponse.<List<ReserveTourResponse>>builder()
                 .result(reserveService.filterReserveTour(reserveTourFilterRequest))
+                .build();
+    }
+
+    @GetMapping("/{url}")
+    public  ApiResponse<ReserveTourResponse> getReserveTour(@PathVariable String url) {
+        return ApiResponse.<ReserveTourResponse>builder()
+                .result( reserveService.getReserveTour(url))
+                .build();
+    }
+
+    @PostMapping("/reserve-tour")
+    public ApiResponse<String>  reserveTour (@RequestBody @Valid ReserveRequests reserveRequests) {
+        System.out.println("Đã vào");
+       reserveService.reserveTour(reserveRequests);
+        return ApiResponse.<String>builder()
                 .build();
     }
 
