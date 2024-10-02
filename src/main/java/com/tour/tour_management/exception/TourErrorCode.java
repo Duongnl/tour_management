@@ -14,6 +14,7 @@ public enum TourErrorCode implements ErrorCode {
     TOUR_NAME_INVALID("TOUR_5","Tour name invalid",HttpStatus.BAD_REQUEST),
     TOUR_DETAIL_INVALID("TOUR_6","Tour detail invalid",HttpStatus.BAD_REQUEST),
     TOUR_URL_INVALID("TOUR_7","Tour url invalid",HttpStatus.BAD_REQUEST),
+    TOUR_CREATE_FAIL("TOUR_8","Tour Create fail",HttpStatus.BAD_REQUEST),
     ;
 
     private String code;

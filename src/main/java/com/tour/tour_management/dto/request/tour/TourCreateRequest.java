@@ -20,7 +20,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TourCreateRequest {
 
-    @Pattern(regexp = "^(?=(.*\\p{L}){2,})[\\p{L}\\p{N} ]{2,255}$",message ="TOUR_NAME_INVALID" )
+    @Pattern(regexp = "^(?=(.*\\p{L}){2,})[\\p{L}\\p{N},() ]{2,2550}$",message ="TOUR_NAME_INVALID" )
     @NotBlank(message = "TOUR_NAME_NOT_BLANK")
     String tour_name;
 
