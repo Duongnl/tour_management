@@ -60,9 +60,9 @@ public class TourController {
     }
 
     @GetMapping("/locked")
-    public  ApiResponse<List<TourResponse>> getDeletedCustomers() {
+    public  ApiResponse<List<TourResponse>> getLockedCustomers() {
         return ApiResponse.<List<TourResponse>>builder()
-                .result( tourService.getDeletedTours())
+                .result( tourService.getLockedTours())
                 .build();
     }
 
