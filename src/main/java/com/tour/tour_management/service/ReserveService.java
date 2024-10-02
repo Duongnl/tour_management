@@ -2,12 +2,15 @@ package com.tour.tour_management.service;
 
 
 import com.tour.tour_management.dto.request.reserve.ReserveRequests;
+import com.tour.tour_management.dto.request.reserve.ReserveStatusRequest;
 import com.tour.tour_management.dto.request.reserve.ReserveTourFilterRequest;
+import com.tour.tour_management.dto.response.reserve.ReserveResponse;
 import com.tour.tour_management.dto.response.reserve.ReserveTourResponse;
 import com.tour.tour_management.entity.*;
 import com.tour.tour_management.exception.*;
 import com.tour.tour_management.mapper.CustomerMapper;
 import com.tour.tour_management.mapper.ReserveMapper;
+import com.tour.tour_management.mapper.TourMapper;
 import com.tour.tour_management.repository.*;
 import com.tour.tour_management.utils.StringUtils;
 import lombok.AccessLevel;
@@ -15,13 +18,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 // thay the autowired va tu tao private final,
 @RequiredArgsConstructor
@@ -36,6 +37,8 @@ public class ReserveService {
     CustomerMapper customerMapper;
     EmployeeRepository employeeRepository;
     TourTimeRepository tourTimeRepository;
+    TourMapper tourMapper;
+
 
     private final ReserveRepository reserveRepository;
 
@@ -77,6 +80,85 @@ public class ReserveService {
 
         return getReserveTour.getFirst();
     }
+
+    public   List<ReserveResponse> getReserves (String slug) {
+        if (StringUtils.getIdFromUrl(slug) == -1) {
+            throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
+        }
+
+        TourTime tourTime = tourTimeRepository.findById(StringUtils.getIdFromUrl(slug))
+                .orElseThrow(()-> new AppException(TourTimeErrorCode.TIME_NOT_FOUND));
+
+        List<ReserveResponse> reserveResponses = new ArrayList<>();
+
+        tourTime.getReserves().forEach(reserve -> {
+            reserveResponses.add(reserveMapper.toReserveResponse(reserve));
+        });
+
+        return reserveResponses;
+
+    }
+
+    public   List<ReserveResponse> getPaidReserves (String slug) {
+        if (StringUtils.getIdFromUrl(slug) == -1) {
+            throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
+        }
+
+        TourTime tourTime = tourTimeRepository.findById(StringUtils.getIdFromUrl(slug))
+                .orElseThrow(()-> new AppException(TourTimeErrorCode.TIME_NOT_FOUND));
+
+        List<ReserveResponse> reserveResponses = new ArrayList<>();
+
+        tourTime.getReserves().forEach(reserve -> {
+            if (reserve.getStatus() == 1) {
+                reserveResponses.add(reserveMapper.toReserveResponse(reserve));
+            }
+        });
+
+        return reserveResponses;
+
+    }
+
+    public   List<ReserveResponse> getUnpaidReserves (String slug) {
+        if (StringUtils.getIdFromUrl(slug) == -1) {
+            throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
+        }
+
+        TourTime tourTime = tourTimeRepository.findById(StringUtils.getIdFromUrl(slug))
+                .orElseThrow(()-> new AppException(TourTimeErrorCode.TIME_NOT_FOUND));
+
+        List<ReserveResponse> reserveResponses = new ArrayList<>();
+
+        tourTime.getReserves().forEach(reserve -> {
+            if (reserve.getStatus() == 2) {
+                reserveResponses.add(reserveMapper.toReserveResponse(reserve));
+            }
+        });
+
+        return reserveResponses;
+
+    }
+
+    public   List<ReserveResponse> getCanceledReserves (String slug) {
+        if (StringUtils.getIdFromUrl(slug) == -1) {
+            throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
+        }
+
+        TourTime tourTime = tourTimeRepository.findById(StringUtils.getIdFromUrl(slug))
+                .orElseThrow(()-> new AppException(TourTimeErrorCode.TIME_NOT_FOUND));
+
+        List<ReserveResponse> reserveResponses = new ArrayList<>();
+
+        tourTime.getReserves().forEach(reserve -> {
+            if (reserve.getStatus() == 0) {
+                reserveResponses.add(reserveMapper.toReserveResponse(reserve));
+            }
+        });
+
+        return reserveResponses;
+
+    }
+
 
 
 
@@ -123,7 +205,7 @@ public class ReserveService {
     public String reserveTour (ReserveRequests reserveRequests) {
 
         List<Reserve> reserveList = new ArrayList<>();
-        Employee employee = employeeRepository.findById(reserveRequests.getReserveRequests().getFirst().getTour_time_id())
+        Employee employee = employeeRepository.findById(reserveRequests.getReserveRequests().getFirst().getEmployee_id())
                 .orElseThrow(()-> new AppException(EmployeeErrorCode.EMPLOYEE_NOT_FOUND));
         TourTime tourTime = tourTimeRepository.findById(reserveRequests.getReserveRequests().getFirst().getTour_time_id())
                 .orElseThrow(()-> new AppException(TourTimeErrorCode.TIME_NOT_FOUND));
@@ -152,6 +234,7 @@ public class ReserveService {
             else {
                Customer customer = customerMapper.toCustomerFromResponse(reserveRequest.getCustomerResponse());
                customer.setRelationship_name("Chủ hộ");
+               customer.setStatus(1);
                reserve.setCustomer(customer);
             }
             LocalDateTime localDateTime = LocalDateTime.now();
@@ -161,13 +244,93 @@ public class ReserveService {
         reserveList.forEach(reserve -> {customerRepository.save(reserve.getCustomer());});
         reserveRepository.saveAll(reserveList);
 
-        tourTime.setQuantity_reserve(tourTime.getQuantity_reserve() + reserveRequests.getReserveRequests().size());
-        tourTime.setQuantity_left(tourTime.getQuantity() -  tourTime.getQuantity_reserve());
-        tourTimeRepository.save(tourTime);
+        updateQuantitySell(reserveRequests.getReserveRequests().getFirst().getTour_time_id());
+        updateQuantityReserve(reserveRequests.getReserveRequests().getFirst().getTour_time_id());
+        updateQuantityLeft(reserveRequests.getReserveRequests().getFirst().getTour_time_id());
+        updateTotalCommissionEmployee(reserveRequests.getReserveRequests().getFirst().getEmployee_id());
+        updateTotalSell(reserveRequests.getReserveRequests().getFirst().getEmployee_id());
 
         return "success";
     }
 
+    public ReserveResponse changeStatusReserve (ReserveStatusRequest reserveStatusRequest) {
+        Reserve reserve = reserveRepository.findById(reserveStatusRequest.getReserve_id())
+                .orElseThrow( () -> new AppException(ReserveErrorCode.RESERVE_NOT_FOUND));
+
+        reserve.setStatus(reserveStatusRequest.getStatus());
+
+
+        updateQuantitySell(reserve.getTourTime().getTour_time_id());
+        updateQuantityReserve(reserve.getTourTime().getTour_time_id());
+        updateQuantityLeft(reserve.getTourTime().getTour_time_id());
+        updateTotalCommissionEmployee(reserve.getEmployee().getEmployee_id());
+        updateTotalSell(reserve.getEmployee().getEmployee_id());
+
+        return reserveMapper.toReserveResponse( reserveRepository.save(reserve));
+    }
+
+    public void updateQuantityLeft (Integer tour_time_id) {
+        TourTime tourTime = tourTimeRepository.findById(tour_time_id).
+                orElseThrow( () -> new AppException(TourTimeErrorCode.TIME_NOT_FOUND));
+
+        tourTime.setQuantity_left(tourTime.getQuantity() -
+                (tourTime.getQuantity_reserve() + tourTime.getQuantity_sell()));
+        tourTimeRepository.save(tourTime);
+    }
+
+    public void updateQuantityReserve (Integer tour_time_id) {
+        TourTime tourTime = tourTimeRepository.findById(tour_time_id).
+                orElseThrow( () -> new AppException(TourTimeErrorCode.TIME_NOT_FOUND));
+
+        int quantity_reserve = 0;
+        for (Reserve reserve : tourTime.getReserves()) {
+            if (reserve.getStatus() == 2) {
+                quantity_reserve++;
+            }
+        }
+        tourTime.setQuantity_reserve(quantity_reserve);
+        tourTimeRepository.save(tourTime);
+    }
+
+    public void updateQuantitySell (Integer tour_time_id) {
+        TourTime tourTime = tourTimeRepository.findById(tour_time_id).
+                orElseThrow( () -> new AppException(TourTimeErrorCode.TIME_NOT_FOUND));
+
+        int quantity_sell = 0;
+        for (Reserve reserve : tourTime.getReserves()) {
+            if (reserve.getStatus() == 1) {
+                quantity_sell++;
+            }
+        }
+        tourTime.setQuantity_sell(quantity_sell);
+        tourTimeRepository.save(tourTime);
+    }
+
+    public void updateTotalCommissionEmployee (Integer employee_id) {
+        Employee employee = employeeRepository.findById(employee_id)
+                .orElseThrow( () -> new AppException(EmployeeErrorCode.EMPLOYEE_NOT_FOUND));
+        BigInteger total_commission = new BigInteger("0");
+        for (Reserve reserve : employee.getReserves()) {
+            if (reserve.getStatus() == 1){
+            total_commission = total_commission.add(BigInteger.valueOf(reserve.getCommission()));
+            }
+        }
+        employee.setTotal_commission(total_commission);
+        employeeRepository.save(employee);
+    }
+
+    public void updateTotalSell (Integer employee_id) {
+        Employee employee = employeeRepository.findById(employee_id)
+                .orElseThrow( () -> new AppException(EmployeeErrorCode.EMPLOYEE_NOT_FOUND));
+        BigInteger total_sell = new BigInteger("0");
+        for (Reserve reserve : employee.getReserves()) {
+            if (reserve.getStatus() == 1) {
+                total_sell = total_sell.add(BigInteger.valueOf(reserve.getPrice()));
+            }
+        }
+        employee.setTotal_sales(total_sell);
+        employeeRepository.save(employee);
+    }
 
 
 }

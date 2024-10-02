@@ -1,6 +1,7 @@
 package com.tour.tour_management.mapper;
 
 import com.tour.tour_management.dto.request.reserve.ReserveRequest;
+import com.tour.tour_management.dto.response.reserve.ReserveResponse;
 import com.tour.tour_management.dto.response.reserve.ReserveTourResponse;
 import com.tour.tour_management.dto.response.reserve.ReserveTourTimeResponse;
 import com.tour.tour_management.dto.response.role.RoleResponse;
@@ -20,4 +21,6 @@ public interface ReserveMapper {
     ReserveTourTimeResponse toReserveTourTimeResponse(TourTime tourTime);
 
     Reserve toReserve(ReserveRequest reserveRequest);
+
+    ReserveResponse toReserveResponse(Reserve reserve);
 }
