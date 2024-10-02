@@ -108,6 +108,8 @@ public class GlobalExceptionHandler {
                 return CustomerErrorCode.valueOf(enumKey);
             case "TIME":
                 return TourTimeErrorCode.valueOf(enumKey);
+            case "RESERVE":
+                return ReserveErrorCode.valueOf(enumKey);
             default:
                 return null;
         }

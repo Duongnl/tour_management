@@ -15,6 +15,7 @@ public enum EmployeeErrorCode implements ErrorCode {
             "30 Days of month – 4, 6, 9, 11,." +
             "ISO 8601, yyyy-MM-dd or uuuu-M-d, e.g 2020-11-03.", HttpStatus.BAD_REQUEST),
     EMPLOYEE_NAME_INVALID("EMPLOYEE_2", "Name is invalid", HttpStatus.BAD_REQUEST),
+    EMPLOYEE_NOT_FOUND("EMPLOYEE_3", "Employee not found", HttpStatus.NOT_FOUND),
     ;
 
     private String code;

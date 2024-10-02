@@ -22,5 +22,5 @@ public interface CustomerMapper {
 
     void updateCustomer(@MappingTarget Customer customer, CustomerRequest customerUpdateRequest);
 
-
+    Customer toCustomerFromResponse(CustomerResponse customerResponse);
 }
