@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ReserveErrorCode implements ErrorCode{
     RESERVE_NOTE_INVALID ("RESERVE_1","Note is invalid", HttpStatus.BAD_REQUEST),
-    RESERVE_QUANTITY_NOT_ENOUGH ("RESERVE_2","Quantity dont enough", HttpStatus.BAD_REQUEST),
+    RESERVE_QUANTITY_NOT_ENOUGH ("RESERVE_2","Quantity not enough", HttpStatus.BAD_REQUEST),
+    RESERVE_NOT_FOUND ("RESERVE_3","Reserve not found", HttpStatus.BAD_REQUEST),
     ;
 
     private String code;
