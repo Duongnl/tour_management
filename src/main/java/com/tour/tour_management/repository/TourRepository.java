@@ -31,11 +31,9 @@ public interface TourRepository extends JpaRepository<Tour,Integer> {
 //    SELECT * FROM tour JOIN tour_time ON tour.tour_id = tour_time.tour_id
 //    WHERE tour_time.departure_date >= '2024-08-24' AND tour_time.departure_date <= '2024-09-07'
 //    @Query("SELECT Tour FROM Tour JOIN Tour.tourTimes WHERE tourTimes.departure_date >= '2024-08-24' AND tourTimes.departure_date <= '2024-09-07'")
-@Query("SELECT t FROM Tour t JOIN t.tourTimes tt WHERE tt.departure_date BETWEEN :startDay AND :endDay")
-List<Tour> daysFilterReserveTours(@Param("startDay") LocalDate startDay, @Param("endDay") LocalDate endDay);
+@Query("SELECT t FROM Tour t JOIN t.tourTimes tt WHERE (tt.departure_date BETWEEN :startDay AND :endDay OR :startDay IS NULL OR :endDay  IS NULL) AND (t.category.category_id = :category_id OR  :category_id IS NULL)")
+List<Tour> daysFilterReserveTours(@Param("startDay") LocalDate startDay, @Param("endDay") LocalDate endDay, @Param("category_id") Integer category_id);
 
-@Query ("SELECT t FROM Tour t WHERE t.category.category_id = ?1")
-List <Tour> categoryFilterReserveTours (Integer category_id);
 
     @Query("SELECT t FROM Tour t JOIN t.tourTimes tt WHERE t.category.category_id = :category_id AND tt.departure_date BETWEEN :startDay AND :endDay")
     List <Tour> filterReserveTours (@Param("category_id")  Integer category_id,@Param("startDay") LocalDate startDay, @Param("endDay") LocalDate endDay);
