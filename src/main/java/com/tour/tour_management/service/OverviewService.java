@@ -7,6 +7,7 @@ import com.tour.tour_management.repository.OverviewRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,16 +26,19 @@ public class OverviewService {
     OverviewRepository overviewRepository;
     OverviewMapper overviewMapper;
 
+    @PreAuthorize("hasRole('ACCESS_DASHBOARD')")
     public List<ReportPerEmployeeInYearResponse> reportCommissionEmployee(Integer year) {
         int yearFinal = (year == null) ? Year.now().getValue() : year;
         return overviewMapper.mapTupleToReportPerEmployeeInYearResponse(overviewRepository.getReportCommissionPerEmployeeAsTuple(yearFinal), yearFinal);
     }
 
+    @PreAuthorize("hasRole('ACCESS_DASHBOARD')")
     public List<ReportPerEmployeeInYearResponse> reportSaleEmployee(Integer year) {
         int yearFinal = (year == null) ? Year.now().getValue() : year;
         return overviewMapper.mapTupleToReportPerEmployeeInYearResponse(overviewRepository.getReportSalePerEmployeeAsTuple(yearFinal), yearFinal);
     }
 
+    @PreAuthorize("hasRole('ACCESS_DASHBOARD')")
     public List<ReportPerMonthResponse> reportSale(Integer year, Integer fromMonth, Integer toMonth) {
         int yearFinal = filterYear(year);
         int fromMonthFinal = filterMonth(fromMonth, true);
@@ -43,6 +47,7 @@ public class OverviewService {
         return overviewMapper.mapTupleToReportPerMonthResponse(overviewRepository.getReportSaleAsTuple(yearFinal, fromMonthFinal, toMonthFinal), yearFinal, fromMonthFinal,toMonthFinal);
     }
 
+    @PreAuthorize("hasRole('ACCESS_DASHBOARD')")
     public List<ReportPerMonthResponse> reportCommission(Integer year, Integer fromMonth, Integer toMonth) {
         int yearFinal = filterYear(year);
         int fromMonthFinal = filterMonth(fromMonth, true);

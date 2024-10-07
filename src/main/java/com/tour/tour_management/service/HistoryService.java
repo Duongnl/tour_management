@@ -13,6 +13,7 @@ import com.tour.tour_management.repository.HistoryRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ public class HistoryService {
     // khai báo chức năng đổi từ entity history sang Historyreponse
     HistoryMapper historyMapper;
 
+    @PreAuthorize("hasRole('ACCESS_HISTORY')")
     public List<HistoryResponse> getHistories()
     {
         // lấy tất cả thằng history
@@ -50,6 +52,7 @@ public class HistoryService {
         return historyResponses;
     }
 
+    @PreAuthorize("hasRole('ACCESS_HISTORY')")
     public List<HistoryResponse> getHistoriesOrderedByDateTime(){
         List<History> histories =  historyRepository.findAllOrderedByDateTime();
         List<HistoryResponse> historyResponseList = new ArrayList<>();
@@ -60,6 +63,7 @@ public class HistoryService {
         return historyResponseList;
     }
 
+    @PreAuthorize("hasRole('ACCESS_HISTORY')")
     public List<HistoryResponse> getHistoriesByDate(HistoryDateRequest historyDateRequest)
     {
         List<History> histories =  historyRepository.findHistoryByTime(historyDateRequest.getStartTime() , historyDateRequest.getEndTime() );

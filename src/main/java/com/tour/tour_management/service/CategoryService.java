@@ -12,6 +12,7 @@ import com.tour.tour_management.utils.StringUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,7 +27,7 @@ public class CategoryService {
     CategoryRepository categoryRepository;
     CategoryMapper categoryMapper;
 
-
+    @PreAuthorize("hasRole('ACCESS_CATEGORY')")
     public List<CategoryResponse> getCategories(){
         List<Category> categoryList =  categoryRepository.findAll();
         List<CategoryResponse> categoryResponseList = new ArrayList<>();
@@ -37,6 +38,7 @@ public class CategoryService {
         return categoryResponseList;
     }
 
+    @PreAuthorize("hasRole('ACCESS_CATEGORY')")
     public List<CategoryResponse> getLockedCategories(){
         List<Category> categoryList =  categoryRepository.findByStatus(0);
         List<CategoryResponse> categoryResponseList = new ArrayList<>();
@@ -47,6 +49,7 @@ public class CategoryService {
         return categoryResponseList;
     }
 
+    @PreAuthorize("hasRole('ACCESS_CATEGORY')")
     public List<CategoryResponse> getActiveCategories(){
         List<Category> categoryList =  categoryRepository.findByStatus(1);
         List<CategoryResponse> categoryResponseList = new ArrayList<>();
@@ -58,7 +61,7 @@ public class CategoryService {
     }
 
 
-
+    @PreAuthorize("hasRole('ACCESS_CATEGORY')")
     public CategoryResponse getCategory(String category_url) {
 
         if (StringUtils.getIdFromUrl(category_url) == -1) {
@@ -70,12 +73,14 @@ public class CategoryService {
         return categoryMapper.toCategoryResponse(category);
     }
 
+    @PreAuthorize("hasRole('CREATE_CATEGORY')")
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
         Category category = categoryMapper.toCategory(categoryRequest);
         category.setStatus(1);
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }
 
+    @PreAuthorize("hasRole('UPDATE_CATEGORY')")
     public CategoryResponse updateCategory(String category_url , CategoryRequest categoryRequest) {
 
         Category category = categoryRepository.findById(StringUtils.getIdFromUrl(category_url))
@@ -85,6 +90,7 @@ public class CategoryService {
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }
 
+    @PreAuthorize("hasRole('CHANGE_CATEGORY_STATUS')")
     public CategoryResponse changeCategoryStatus (String category_id ) {
         Category category = categoryRepository.findById(Integer.parseInt(category_id))
                 .orElseThrow(() -> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
@@ -120,6 +126,7 @@ public class CategoryService {
     }
 
 
+    @PreAuthorize("hasRole('CHANGE_CATEGORY_STATUS')")
     public CategoryResponse deleteCategory(String category_url) {
         if (StringUtils.getIdFromUrl(category_url) == -1) {
             throw new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND);
