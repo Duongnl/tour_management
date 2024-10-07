@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -40,12 +41,14 @@ public class TourService {
     TourTimeRepository tourTimeRepository;
     HistoryService historyService;
 
+    @PreAuthorize("hasRole('ACCESS_TOUR')")
     public TourDetailResponse getTour(int tour_id) {
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
         return tourMapper.toTourDetailResponse(tourSorted(tour));
     }
 
+    @PreAuthorize("hasRole('ACCESS_TOUR')")
     public List<TourResponse> getTours() {
         List<Tour> tourList = tourRepository.findAll();
         List<TourResponse> tourResponseList = new ArrayList<>();
@@ -55,6 +58,7 @@ public class TourService {
         return tourResponseList;
     }
 
+    @PreAuthorize("hasRole('ACCESS_TOUR')")
     public List<TourResponse> getToursCategory(Integer category_id, int active) {
         List<Tour> tourList = tourRepository.findByCategoryId(category_id);
         List<TourResponse> tourResponseList = new ArrayList<>();
@@ -68,6 +72,7 @@ public class TourService {
         return tourResponseList;
     }
 
+    @PreAuthorize("hasRole('ACCESS_TOUR')")
     public List<TourResponse> getActiveTours() {
         Sort sort = Sort.by(Sort.Direction.DESC, "tour_id");
 
@@ -80,6 +85,7 @@ public class TourService {
         return tourResponseList;
     }
 
+    @PreAuthorize("hasRole('ACCESS_TOUR')")
     public List<TourResponse> getLockedTours() {
         Sort sort = Sort.by(Sort.Direction.DESC, "tour_id");
 
@@ -92,6 +98,7 @@ public class TourService {
         return tourResponseList;
     }
 
+    @PreAuthorize("hasRole('CREATE_TOUR')")
     public TourDetailResponse createTour(TourCreateRequest tourCreateRequest) {
         Category category = categoryRepository.findById(tourCreateRequest.getCategory_id())
                 .orElseThrow(() -> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
@@ -134,6 +141,7 @@ public class TourService {
         return tourMapper.toTourDetailResponse((tourSorted(tour)));
     }
 
+
     public Tour tourSorted(@NotNull Tour tour) {
         tour.setTourTimes(
                 tourTimeRepository.findAllOrderedByTourId(
@@ -143,6 +151,7 @@ public class TourService {
         return tour;
     }
 
+    @PreAuthorize("hasRole('CREATE_TOUR')")
     public TourDetailResponse createTourTime(int tour_id, TourTimeRequest tourTimeRequest) {
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
@@ -179,6 +188,7 @@ public class TourService {
         return tourMapper.toTourDetailResponse(tourSaved);
     }
 
+    @PreAuthorize("hasRole('UPDATE_TOUR')")
     public TourDetailResponse updateTourTime(int tour_id, int tour_time_id, TourTimeRequest tourTimeRequest) {
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
@@ -202,6 +212,7 @@ public class TourService {
         return tourMapper.toTourDetailResponse(tour);
     }
 
+    @PreAuthorize("hasRole('UPDATE_TOUR')")
     public TourDetailResponse updateTour(int tour_id, TourUpdateRequest tourUpdateRequest) {
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
@@ -215,6 +226,7 @@ public class TourService {
         return tourMapper.toTourDetailResponse(tourSorted(tourSaved));
     }
 
+    @PreAuthorize("hasRole('CHANGE_TOUR_STATUS')")
     public TourDetailResponse changeStatusTour(Integer tour_id) {
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
@@ -230,6 +242,7 @@ public class TourService {
 
     }
 
+    @PreAuthorize("hasRole('CHANGE_TOUR_STATUS')")
     public TourDetailResponse changeStatusTourTime(Integer tour_id, Integer tourtime_id) {
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));

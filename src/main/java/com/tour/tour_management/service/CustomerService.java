@@ -37,6 +37,7 @@ public class CustomerService {
      *
      * @return danh sách khách hàng
      */
+    @PreAuthorize("hasRole('ACCESS_CUSTOMER')")
     public List<CustomerResponse> getCustomers(){
         List<Customer> customerList =  customerRepository.findAllOrderedByDateTime();
         List<CustomerResponse> customerResponseList = new ArrayList<>();
@@ -89,6 +90,7 @@ public class CustomerService {
      *
      * @return danh sách dữ liệu khách hàng
      */
+    @PreAuthorize("hasRole('ACCESS_CUSTOMER')")
     public List<CustomerResponse> getCustomersParent(){
         List<Customer> customerList =  customerRepository.findAllOrderedByDateTime();
         List<CustomerResponse> customerResponseList = new ArrayList<>();
@@ -101,6 +103,7 @@ public class CustomerService {
         return customerResponseList;
     }
 
+    @PreAuthorize("hasRole('ACCESS_CUSTOMER')")
     public CustomerDetailResponse getCustomer(String customer_url) {
         Integer id = StringUtils.getIdFromUrl(customer_url);
 
@@ -137,6 +140,7 @@ public class CustomerService {
         return c;
     }
 
+    @PreAuthorize("hasRole('CREATE_CUSTOMER')")
     public CustomerDetailResponse createCustomer(CustomerRequest customerRequest) {
         // check phone number
         if (customerRepository.existsByPhone_number(customerRequest.getPhone_number())) {
@@ -164,6 +168,7 @@ public class CustomerService {
         return customerMapper.toCustomerDetailResponse(customerSaved);
     }
 
+    @PreAuthorize("hasRole('UPDATE_CUSTOMER')")
     public CustomerDetailResponse updateCustomer(String CUSTOMER_url , CustomerRequest customerRequest) {
 
         Customer customer = customerRepository.findById(StringUtils.getIdFromUrl(CUSTOMER_url))
@@ -198,6 +203,7 @@ public class CustomerService {
         return customerMapper.toCustomerDetailResponse(customerSaved);
     }
 
+    @PreAuthorize("hasRole('CHANGE_CUSTOMER_STATUS')")
     public CustomerDetailResponse changeStatus (String customer_url) {
         if (StringUtils.getIdFromUrl(customer_url) == -1) {
             throw new AppException(CustomerErrorCode.CUSTOMER_NOT_FOUND);

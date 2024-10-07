@@ -16,6 +16,7 @@ import com.tour.tour_management.utils.StringUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -42,6 +43,7 @@ public class ReserveService {
 
     private final ReserveRepository reserveRepository;
 
+    @PreAuthorize("hasRole('ACCESS_RESERVE')")
     public List<ReserveTourResponse> getReserveTours () {
         List<Tour> tourList = tourRepository.findAll();
         List<ReserveTourResponse> reserveTourList = new ArrayList<>();
@@ -56,6 +58,7 @@ public class ReserveService {
         return reserveTourList;
     }
 
+    @PreAuthorize("hasRole('ACCESS_RESERVE')")
     public ReserveTourResponse getReserveTour (String slug) {
         if (StringUtils.getIdFromUrl(slug) == -1) {
             throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
@@ -81,6 +84,7 @@ public class ReserveService {
         return getReserveTour.getFirst();
     }
 
+    @PreAuthorize("hasRole('ACCESS_RESERVE')")
     public   List<ReserveResponse> getReserves (String slug) {
         if (StringUtils.getIdFromUrl(slug) == -1) {
             throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
@@ -99,6 +103,7 @@ public class ReserveService {
 
     }
 
+    @PreAuthorize("hasRole('ACCESS_RESERVE')")
     public   List<ReserveResponse> getPaidReserves (String slug) {
         if (StringUtils.getIdFromUrl(slug) == -1) {
             throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
@@ -119,6 +124,7 @@ public class ReserveService {
 
     }
 
+    @PreAuthorize("hasRole('ACCESS_RESERVE')")
     public   List<ReserveResponse> getUnpaidReserves (String slug) {
         if (StringUtils.getIdFromUrl(slug) == -1) {
             throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
@@ -139,6 +145,7 @@ public class ReserveService {
 
     }
 
+    @PreAuthorize("hasRole('ACCESS_RESERVE')")
     public   List<ReserveResponse> getCanceledReserves (String slug) {
         if (StringUtils.getIdFromUrl(slug) == -1) {
             throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
@@ -166,6 +173,7 @@ public class ReserveService {
         return !departureDate.isBefore(startDate) && !departureDate.isAfter(endDate);
     }
 
+    @PreAuthorize("hasRole('ACCESS_RESERVE')")
     public List<ReserveTourResponse> filterReserveTour (ReserveTourFilterRequest reserveTourFilterRequest) {
 
         System.out.println("data reserve" + reserveTourFilterRequest);
@@ -202,6 +210,7 @@ public class ReserveService {
     }
 
 
+    @PreAuthorize("hasRole('CREATE_RESERVE')")
     public String reserveTour (ReserveRequests reserveRequests) {
 
         List<Reserve> reserveList = new ArrayList<>();
@@ -253,6 +262,7 @@ public class ReserveService {
         return "success";
     }
 
+    @PreAuthorize("hasRole('UPDATE_BOOKED')")
     public ReserveResponse changeStatusReserve (ReserveStatusRequest reserveStatusRequest) {
         Reserve reserve = reserveRepository.findById(reserveStatusRequest.getReserve_id())
                 .orElseThrow( () -> new AppException(ReserveErrorCode.RESERVE_NOT_FOUND));
