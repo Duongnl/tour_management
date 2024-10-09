@@ -14,13 +14,12 @@ import com.tour.tour_management.utils.StringUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.util.*;
 
 // thay the autowired va tu tao private final,
 @RequiredArgsConstructor
@@ -32,6 +31,7 @@ public class RoleService {
     RoleRepository roleRepository;
     RoleMapper roleMapper;
     PermissionRepository permissionRepository;
+    HistoryService historyService;
 
     @PreAuthorize("hasRole('ACCESS_ROLE')")
     public List<RoleResponse> getRoles () {
@@ -88,13 +88,20 @@ public class RoleService {
         role.setRole_name(roleRequest.getRole_name());
         role.setPermissions(permissionSet);
         role.setStatus(1);
-        return roleMapper.toRoleResponse(roleRepository.save(role));
+        Role roleSaved = roleRepository.save(role);
+
+        historyService.createHistory("Create role: " + roleSaved.getRole_name());
+
+        return roleMapper.toRoleResponse(roleSaved);
     }
 
     @PreAuthorize("hasRole('UPDATE_ROLE')")
     public RoleResponse updateRole (String slug, RoleRequest roleRequest) {
         Role role = roleRepository.findById(StringUtils.getIdFromUrl(slug))
                 .orElseThrow(() -> new AppException(RoleErrorCode.ROLE_NOT_FOUND));
+
+        Role roleOld=roleMapper.copy(role);
+
         Set<Permission> permissionSet = new HashSet<>();
         for (int i =0; i< roleRequest.getPermission().length; i++) {
             Permission permission = permissionRepository.findById(roleRequest.getPermission()[i])
@@ -104,7 +111,10 @@ public class RoleService {
         role.setRole_name(roleRequest.getRole_name());
         role.setPermissions(permissionSet);
 
-        return roleMapper.toRoleResponse(roleRepository.save(role));
+        Role roleSaved=roleRepository.save(role);
+        historyService.createHistory(getRoleChangedString(roleOld,roleSaved));
+
+        return roleMapper.toRoleResponse(roleSaved);
     }
 
     @PreAuthorize("hasRole('CHANGE_ROLE_STATUS')")
@@ -122,6 +132,39 @@ public class RoleService {
         } else {
           role.setStatus(1);
         }
-        return roleMapper.toRoleResponse(roleRepository.save(role));
+        Role roleSaved = roleRepository.save(role);
+        historyService.createHistory("Change status role: " + roleSaved.getRole_name());
+        return roleMapper.toRoleResponse(roleSaved);
+    }
+    
+    private static @NotNull String getRoleChangedString(Role role, Role roleSaved) {
+        StringBuilder roleChangedString = new StringBuilder("Update role: ");
+
+        // lấy tất cả các field trong các entity
+        Field[] fields = Role.class.getDeclaredFields();
+
+        for (Field field : fields) {
+            try {
+                // Lấy giá trị của field cho cả hai object
+                field.setAccessible(true);
+                Object value1 = field.get(role);
+                Object value2 = field.get(roleSaved);
+
+                // So sánh giá trị, nếu khác nhau thì thêm vào chuỗi thay đổi
+                if (!Objects.equals(value1, value2)) {
+                    roleChangedString.append(" ")
+                            .append(field.getName())
+                            .append(": ")
+                            .append(value1)
+                            .append(" -> ")
+                            .append(value2)
+                            .append(";");
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace(); // Xử lý lỗi nếu có
+            }
+        }
+
+        return roleChangedString.toString();
     }
 }

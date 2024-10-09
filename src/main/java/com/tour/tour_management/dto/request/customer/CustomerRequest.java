@@ -1,11 +1,11 @@
 package com.tour.tour_management.dto.request.customer;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 @Data

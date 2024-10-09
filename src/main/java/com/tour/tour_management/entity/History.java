@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 @Entity
 //tao get set
@@ -30,5 +29,5 @@ public class History {
     @JoinColumn(name = "account_id", nullable = false, referencedColumnName = "account_id")
     @JsonBackReference
     Account account;
-
+    
 }

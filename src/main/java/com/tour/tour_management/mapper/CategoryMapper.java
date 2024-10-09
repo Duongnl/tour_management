@@ -22,23 +22,5 @@ public interface CategoryMapper {
 
     void updateCategory(@MappingTarget Category category, CategoryRequest categoryUpdateRequest);
 
-//    @Named("convert")
-//    default Set<TourConvert> convert(Set<Tour> tours){
-//        Set<TourConvert> toursConvert = new HashSet<>();
-//        tours.forEach(tour -> {
-//            toursConvert.add(TourConvert.builder()
-//                    .tour_id(tour.getTour_id())
-//                    .tour_name(tour.getTour_name())
-//                    .build());
-//        });
-//        return toursConvert;
-//    }
-//
-//    @Getter
-//    @Setter
-//    @Builder
-//    class TourConvert{
-//        private String tour_id;
-//        private String tour_name;
-//    }
+    Category copy(Category category);
 }
