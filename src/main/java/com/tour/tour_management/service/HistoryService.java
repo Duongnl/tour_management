@@ -1,6 +1,7 @@
 package com.tour.tour_management.service;
 
 import com.tour.tour_management.dto.request.history.HistoryDateRequest;
+import com.tour.tour_management.dto.request.history.HistoryRequest;
 import com.tour.tour_management.dto.response.history.HistoryResponse;
 import com.tour.tour_management.entity.Account;
 import com.tour.tour_management.entity.History;
@@ -15,7 +16,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +27,7 @@ import java.util.List;
 public class HistoryService {
     // khai báo cái kho chứ dữ liệu history
     HistoryRepository historyRepository;
-    AuthenticationService authenticationService;
-
+    AccountRepository accountRepository;
 
     // khai báo chức năng đổi từ entity history sang Historyreponse
     HistoryMapper historyMapper;
@@ -84,20 +83,22 @@ public class HistoryService {
 
     }
 
-    public void createHistory(String historyDetail) {
-        Account account = authenticationService.getAuthenticatedAccount();
+    public HistoryResponse createHistory(HistoryRequest historyRequest) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        Account account = accountRepository.findByAccountName(name).orElseThrow(
+                () -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND));
         if (account.getStatus() != 1 ){
             throw new AppException(AccountErrorCode.ACCOUNT_LOCKED);
         }
-        LocalDateTime localDateTime = LocalDateTime.now();
 
-        History history = new History();
-        history.setAccount(account);
-        history.setHistory_detail(historyDetail);
-        history.setTime(localDateTime);
+        History history = historyMapper.toHistory(historyRequest);
         history.setStatus(1);
-        History historySaved=historyRepository.save(history);
-        historyMapper.toHistoryResponse(historySaved);
-    }
+        LocalDateTime localDateTime = LocalDateTime.now();
+        history.setTime(localDateTime);
 
+        history.setAccount(account);
+        return historyMapper.toHistoryResponse(historyRepository.save(history));
+    }
 }

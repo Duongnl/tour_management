@@ -10,10 +10,6 @@ import org.mapstruct.MappingTarget;
 public interface AirlineMapper
 {
     Airline toAirline (AirlineCreateRequest airlineCreateRequest);
-
     AirlineResponse toAirlineResponse (Airline airline);
-
     void updateAirline (@MappingTarget Airline airline, AirlineCreateRequest airlineCreateRequest);
-
-    Airline copy(Airline airline);
 }

@@ -38,7 +38,7 @@ public class ReserveService {
     CustomerMapper customerMapper;
     EmployeeRepository employeeRepository;
     TourTimeRepository tourTimeRepository;
-    HistoryService historyService;
+    TourMapper tourMapper;
 
 
     private final ReserveRepository reserveRepository;
@@ -251,14 +251,7 @@ public class ReserveService {
             reserveList.add(reserve);
         });
         reserveList.forEach(reserve -> {customerRepository.save(reserve.getCustomer());});
-        List<Reserve> reserveListSaved = reserveRepository.saveAll(reserveList);
-
-        StringBuilder stringReserveCreate = new StringBuilder("Create reserve: ");
-
-        reserveListSaved.forEach(reserve -> {
-            stringReserveCreate.append(reserve.getReserve_id()).append(" ");
-        });
-        historyService.createHistory(stringReserveCreate.toString().trim());
+        reserveRepository.saveAll(reserveList);
 
         updateQuantitySell(reserveRequests.getReserveRequests().getFirst().getTour_time_id());
         updateQuantityReserve(reserveRequests.getReserveRequests().getFirst().getTour_time_id());
@@ -283,9 +276,7 @@ public class ReserveService {
         updateTotalCommissionEmployee(reserve.getEmployee().getEmployee_id());
         updateTotalSell(reserve.getEmployee().getEmployee_id());
 
-        Reserve reserveSaved= reserveRepository.save(reserve);
-        historyService.createHistory("Changed status reserve: "+reserve.getReserve_id());
-        return reserveMapper.toReserveResponse(reserveSaved);
+        return reserveMapper.toReserveResponse( reserveRepository.save(reserve));
     }
 
     public void updateQuantityLeft (Integer tour_time_id) {

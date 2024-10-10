@@ -1,10 +1,12 @@
 package com.tour.tour_management.dto.response.customer;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Builder // tao builder de tao doi tuong nhanh

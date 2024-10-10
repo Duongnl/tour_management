@@ -4,19 +4,15 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 
 @Data
-// tao builder de tao mot doi tuong nhanh
+// tao builder
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 // auto them private vao cac bien kh khai bao
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
-public class HistoryDateRequest {
-    LocalDateTime startTime;
-    LocalDateTime endTime;
-
-
+public class HistoryRequest {
+    String history_detail;
 }
