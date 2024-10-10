@@ -3,10 +3,12 @@ package com.tour.tour_management.mapper;
 import com.tour.tour_management.dto.request.account.AccountRequest;
 import com.tour.tour_management.dto.request.account.AccountUpdateRequest;
 import com.tour.tour_management.dto.request.account.EmployeeRequest;
+import com.tour.tour_management.dto.request.tour.TourUpdateRequest;
 import com.tour.tour_management.dto.response.account.AccountResponse;
 import com.tour.tour_management.dto.response.account.GetAccountResponse;
 import com.tour.tour_management.entity.Account;
 import com.tour.tour_management.entity.Employee;
+import com.tour.tour_management.entity.Tour;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -25,8 +27,4 @@ public interface AccountMapper {
     void updateAccount (@MappingTarget Account account, AccountUpdateRequest accountRequest);
 
     void updateEmployee (@MappingTarget Employee employee, EmployeeRequest employeeRequest);
-
-    Account copy(Account account);
-
-    Employee copy(Employee employee);
 }

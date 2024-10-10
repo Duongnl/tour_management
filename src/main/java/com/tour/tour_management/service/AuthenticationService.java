@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,8 +28,7 @@ import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
+import java.util.*;
 
 // kiem tra mat khau tai khoan, neu dung thi ra token
 @RequiredArgsConstructor
@@ -71,7 +69,7 @@ public class AuthenticationService {
 //    kiem tra mk tk neu dung thi cho ra token
     public AuthenticationResponse authenticate (AuthenticationRequest authenticationRequest) {
 //        tim kiem account name
-            Account account = accountRepository.findByAccountName(authenticationRequest.getAccount_name())
+        Account account = accountRepository.findByAccountName(authenticationRequest.getAccount_name())
                 .orElseThrow(() -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND));
 
 //       so sanh password
@@ -145,17 +143,4 @@ public class AuthenticationService {
         return stringJoiner.toString();
     }
 
-    public Account getAuthenticatedAccount() {
-
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
-
-        Account account = accountRepository.findByAccountName(name).orElseThrow(
-                () -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND));
-        if (account.getStatus() != 1) {
-            throw new AppException(AccountErrorCode.ACCOUNT_LOCKED);
-        }
-
-        return account;
-    }
 }

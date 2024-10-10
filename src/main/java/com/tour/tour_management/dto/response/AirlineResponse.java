@@ -3,6 +3,8 @@ package com.tour.tour_management.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.ZonedDateTime;
+
 // tao get set hashcode euqual,...
 @Data
 // tao builder

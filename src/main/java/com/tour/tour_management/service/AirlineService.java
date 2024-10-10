@@ -10,13 +10,10 @@ import com.tour.tour_management.repository.AirlineRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 // thay the autowired va tu tao private final,
 @RequiredArgsConstructor
@@ -26,9 +23,8 @@ import java.util.Objects;
 public class AirlineService {
     AirlineRepository airlineRepository;
     AirlineMapper airlineMapper;
-    HistoryService historyService;
 
-    public List<AirlineResponse> getAirlines() {
+    public List<AirlineResponse> getAirlines()  {
         List<Airline> airlineList = airlineRepository.findAll();
         List<AirlineResponse> airlineResponseList = new ArrayList<>();
         airlineList.forEach(airline -> {
@@ -37,76 +33,42 @@ public class AirlineService {
         return airlineResponseList;
     }
 
-    public List<AirlineResponse> getAirlines(int status) {
+    public List<AirlineResponse> getAirlines(int status)  {
         List<Airline> airlineList = airlineRepository.findAll();
         List<AirlineResponse> airlineResponseList = new ArrayList<>();
         airlineList.forEach(airline -> {
-            if (airline.getStatus() == status)
-                airlineResponseList.add(airlineMapper.toAirlineResponse(airline));
+            if(airline.getStatus()==status)
+            airlineResponseList.add(airlineMapper.toAirlineResponse(airline));
         });
         return airlineResponseList;
     }
 
-    public AirlineResponse createAirline(AirlineCreateRequest airlineCreateRequest) {
+    public AirlineResponse createAirline (AirlineCreateRequest airlineCreateRequest) {
+//        kiểm tra  xem thời gian xuất phát có trước thời gian bay hay không
+//        if (airlineRequest.getDeparture_time().isAfter(airlineRequest.getReturn_time())) {
+//            throw new AppException(AirlineErrorCode.AIRLINE_DEPARTURE_RETURN);
+//        }
         Airline airline = airlineMapper.toAirline(airlineCreateRequest);
-
-        Airline airlineSaved = airlineRepository.save(airline);
-        historyService.createHistory("Create Airline " + airlineSaved.getAirline_name());
-
-        return airlineMapper.toAirlineResponse(airlineSaved);
+        return airlineMapper.toAirlineResponse(airlineRepository.save(airline));
     }
 
-    public AirlineResponse updateAirline(int airline_id, AirlineCreateRequest airlineCreateRequest) {
+    public AirlineResponse updateAirline ( int airline_id , AirlineCreateRequest airlineCreateRequest) {
         Airline airline = airlineRepository.findById(airline_id)
                 .orElseThrow(() -> new AppException(AirlineErrorCode.AIRLINE_NOT_FOUND));
 
-        Airline airlineOld = airlineMapper.copy(airline);
-
+        //        kiểm tra  xem thời gian xuất phát có trước thời gian bay hay không
+//        if (airlineRequest.getDeparture_time().isAfter(airlineRequest.getReturn_time())) {
+//            throw new AppException(AirlineErrorCode.AIRLINE_DEPARTURE_RETURN);
+//        }
         airlineMapper.updateAirline(airline, airlineCreateRequest);
-
-        Airline airlineSaved = airlineRepository.save(airline);
-        historyService.createHistory(getAirlineChangedString(airlineOld, airlineSaved));
-        return airlineMapper.toAirlineResponse(airlineSaved);
+        return airlineMapper.toAirlineResponse(
+                airlineRepository.save(airline));
     }
 
-    private static @NotNull String getAirlineChangedString(Airline airline, Airline airlineSaved) {
-        StringBuilder airlineChangedString = new StringBuilder("Update airline: ");
-
-        // lấy tất cả các field trong các entity
-        Field[] fields = Airline.class.getDeclaredFields();
-
-        for (Field field : fields) {
-            try {
-                // Lấy giá trị của field cho cả hai object
-                field.setAccessible(true);
-                Object value1 = field.get(airline);
-                Object value2 = field.get(airlineSaved);
-
-                // So sánh giá trị, nếu khác nhau thì thêm vào chuỗi thay đổi
-                if (!Objects.equals(value1, value2)) {
-                    airlineChangedString.append(" ")
-                            .append(field.getName())
-                            .append(": ")
-                            .append(value1)
-                            .append(" -> ")
-                            .append(value2)
-                            .append(";");
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace(); // Xử lý lỗi nếu có
-            }
-        }
-
-        return airlineChangedString.toString();
-    }
-
-
-    public void deleteAirline(int airline_id) {
+    public void deleteAirline (int airline_id) {
         Airline airline = airlineRepository.findById(airline_id)
-                .orElseThrow(() -> new AppException(AirlineErrorCode.AIRLINE_NOT_FOUND));
-        String name =airline.getAirline_name();
+                .orElseThrow(()-> new AppException(AirlineErrorCode.AIRLINE_NOT_FOUND));
         airlineRepository.delete(airline);
-        historyService.createHistory("Delete Airline " + name);
     }
 
 }

@@ -4,7 +4,9 @@ import com.tour.tour_management.dto.request.reserve.ReserveRequest;
 import com.tour.tour_management.dto.response.reserve.ReserveResponse;
 import com.tour.tour_management.dto.response.reserve.ReserveTourResponse;
 import com.tour.tour_management.dto.response.reserve.ReserveTourTimeResponse;
+import com.tour.tour_management.dto.response.role.RoleResponse;
 import com.tour.tour_management.entity.Reserve;
+import com.tour.tour_management.entity.Role;
 import com.tour.tour_management.entity.Tour;
 import com.tour.tour_management.entity.TourTime;
 import org.mapstruct.Mapper;
@@ -21,6 +23,4 @@ public interface ReserveMapper {
     Reserve toReserve(ReserveRequest reserveRequest);
 
     ReserveResponse toReserveResponse(Reserve reserve);
-
-    Reserve copy(Reserve reserve);
 }
