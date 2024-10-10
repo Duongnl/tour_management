@@ -46,6 +46,8 @@ public class AccountService {
     RoleRepository roleRepository;
     AccountMapper accountMapper;
     EmployeeRepository employeeRepository;
+    HistoryService historyService;
+    AuthenticationService authenticationService;
 
     @PreAuthorize("hasRole('ACCESS_ACCOUNT')")
     public List<AccountResponse> getAccounts () {
@@ -120,6 +122,8 @@ public class AccountService {
 
         employeeRepository.save(account.getEmployee());
 
+        historyService.createHistory("Created account: "+account.getAccount_name()+" : "+account.getAccount_id());
+
         return accountMapper.toGetAccountResponse(accountRepository.save(account));
     }
 
@@ -131,6 +135,8 @@ public class AccountService {
         accountMapper.updateEmployee(account.getEmployee(),employeeRequest);
 
         employeeRepository.save(account.getEmployee());
+
+        historyService.createHistory("Update employee: "+account.getEmployee().getEmployee_name()+" : "+account.getEmployee().getEmployee_id());
 
         return accountMapper.toGetAccountResponse( account );
 
@@ -169,22 +175,18 @@ public class AccountService {
 //
 //        employeeRepository.save(account.getEmployee());
 
-        return accountMapper.toGetAccountResponse(accountRepository.save(account));
+        accountRepository.save(account);
+        historyService.createHistory("Updated account: "+account.getAccount_name()+" : "+account.getAccount_id());
+
+        return accountMapper.toGetAccountResponse(account);
     }
 
 
 
     //    lay thong tin cua user dang dang nhap
     public GetAccountResponse getMyInfo () {
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
 
-        Account account =   accountRepository.findByAccountName(name).orElseThrow(
-                () -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND));
-        if (account.getStatus() != 1 ){
-             throw new AppException(AccountErrorCode.ACCOUNT_LOCKED);
-        }
-
+        Account account = authenticationService.getAccountInSecurity();
         return accountMapper.toGetAccountResponse(account);
     }
 
@@ -199,7 +201,11 @@ public class AccountService {
         } else {
             account.setStatus(0);
         }
-        return accountMapper.toGetAccountResponse(accountRepository.save(account));
+        
+        historyService.createHistory("Changed status account: "+account.getAccount_name()+" : "+account.getAccount_id());
+        accountRepository.save(account);
+
+        return accountMapper.toGetAccountResponse(account);
     }
 
 

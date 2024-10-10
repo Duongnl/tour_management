@@ -38,7 +38,7 @@ public class ReserveService {
     CustomerMapper customerMapper;
     EmployeeRepository employeeRepository;
     TourTimeRepository tourTimeRepository;
-    TourMapper tourMapper;
+    HistoryService historyService;
 
 
     private final ReserveRepository reserveRepository;
@@ -211,7 +211,7 @@ public class ReserveService {
 
 
     @PreAuthorize("hasRole('CREATE_RESERVE')")
-    public String reserveTour (ReserveRequests reserveRequests) {
+    public void reserveTour (ReserveRequests reserveRequests) {
 
         List<Reserve> reserveList = new ArrayList<>();
         Employee employee = employeeRepository.findById(reserveRequests.getReserveRequests().getFirst().getEmployee_id())
@@ -259,7 +259,7 @@ public class ReserveService {
         updateTotalCommissionEmployee(reserveRequests.getReserveRequests().getFirst().getEmployee_id());
         updateTotalSell(reserveRequests.getReserveRequests().getFirst().getEmployee_id());
 
-        return "success";
+        historyService.createHistory("Created List reserve: "+reserveList.size());
     }
 
     @PreAuthorize("hasRole('UPDATE_BOOKED')")
@@ -276,7 +276,10 @@ public class ReserveService {
         updateTotalCommissionEmployee(reserve.getEmployee().getEmployee_id());
         updateTotalSell(reserve.getEmployee().getEmployee_id());
 
-        return reserveMapper.toReserveResponse( reserveRepository.save(reserve));
+        reserveRepository.save(reserve);
+        historyService.createHistory("Updated reserve: customer_name"+reserve.getCustomer().getCustomer_name()+" : "+reserve.getReserve_id()+" : "+reserve.getTourTime().getTime_name());
+        
+        return reserveMapper.toReserveResponse(reserve);
     }
 
     public void updateQuantityLeft (Integer tour_time_id) {

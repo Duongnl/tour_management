@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -141,6 +142,17 @@ public class AuthenticationService {
             });
         }
         return stringJoiner.toString();
+    }
+    public Account getAccountInSecurity(){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        Account account = accountRepository.findByAccountName(name).orElseThrow(
+                () -> new AppException(AccountErrorCode.ACCOUNT_NOT_FOUND));
+        if (account.getStatus() != 1 ){
+            throw new AppException(AccountErrorCode.ACCOUNT_LOCKED);
+        }
+        return account;
     }
 
 }

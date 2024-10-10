@@ -163,9 +163,11 @@ public class CustomerService {
         customer.setTime(localDateTime);
 
         customer.setCustomer_name(customer.getCustomer_name());
-        Customer customerSaved=customerRepository.save(customer);
-        historyService.createHistory(new HistoryRequest("create customer: "+customerSaved.getCustomer_id()));
-        return customerMapper.toCustomerDetailResponse(customerSaved);
+        customerRepository.save(customer);
+        
+        historyService.createHistory("Create customer: "+customer.getCustomer_name()+" : "+customer.getCustomer_id());
+
+        return customerMapper.toCustomerDetailResponse(customer);
     }
 
     @PreAuthorize("hasRole('UPDATE_CUSTOMER')")
@@ -198,9 +200,9 @@ public class CustomerService {
         }
 
         customerMapper.updateCustomer(customer, customerRequest);
-        Customer customerSaved=customerRepository.save(customer);
-        historyService.createHistory(new HistoryRequest("update customer: "+customerSaved.getCustomer_id()));
-        return customerMapper.toCustomerDetailResponse(customerSaved);
+        customerRepository.save(customer);
+        historyService.createHistory("Update customer: "+customer.getCustomer_name()+" : "+customer.getCustomer_id());
+        return customerMapper.toCustomerDetailResponse(customer);
     }
 
     @PreAuthorize("hasRole('CHANGE_CUSTOMER_STATUS')")
@@ -217,9 +219,8 @@ public class CustomerService {
         } else {
             customer.setStatus(0);
         }
-        Customer customerSaved=customerRepository.save(customer);
-        historyService.createHistory(new HistoryRequest("change status customer: "+customerSaved.getCustomer_id()));
-
-        return customerMapper.toCustomerDetailResponse(customerSaved);
+        customerRepository.save(customer);
+        historyService.createHistory("Changed status customer: "+customer.getCustomer_name()+" : "+customer.getCustomer_id());
+        return customerMapper.toCustomerDetailResponse(customer);
     }
 }

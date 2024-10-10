@@ -23,6 +23,7 @@ import java.util.List;
 public class AirlineService {
     AirlineRepository airlineRepository;
     AirlineMapper airlineMapper;
+    HistoryService historyService;
 
     public List<AirlineResponse> getAirlines()  {
         List<Airline> airlineList = airlineRepository.findAll();
@@ -49,7 +50,11 @@ public class AirlineService {
 //            throw new AppException(AirlineErrorCode.AIRLINE_DEPARTURE_RETURN);
 //        }
         Airline airline = airlineMapper.toAirline(airlineCreateRequest);
-        return airlineMapper.toAirlineResponse(airlineRepository.save(airline));
+
+        airlineRepository.save(airline);
+        historyService.createHistory("Created airline: "+airline.getAirline_name()+" : "+airline.getAirline_id());
+
+        return airlineMapper.toAirlineResponse(airline);
     }
 
     public AirlineResponse updateAirline ( int airline_id , AirlineCreateRequest airlineCreateRequest) {
@@ -61,14 +66,20 @@ public class AirlineService {
 //            throw new AppException(AirlineErrorCode.AIRLINE_DEPARTURE_RETURN);
 //        }
         airlineMapper.updateAirline(airline, airlineCreateRequest);
-        return airlineMapper.toAirlineResponse(
-                airlineRepository.save(airline));
+
+        airlineRepository.save(airline);
+        historyService.createHistory("Updated airline: "+airline.getAirline_name()+" : "+airline.getAirline_id());
+
+        return airlineMapper.toAirlineResponse(airline);
     }
 
     public void deleteAirline (int airline_id) {
         Airline airline = airlineRepository.findById(airline_id)
                 .orElseThrow(()-> new AppException(AirlineErrorCode.AIRLINE_NOT_FOUND));
         airlineRepository.delete(airline);
+
+        historyService.createHistory("Deleted airline: "+airline.getAirline_name()+" : "+airline.getAirline_id());
+        
     }
 
 }

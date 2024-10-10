@@ -26,6 +26,7 @@ import java.util.*;
 public class CategoryService {
     CategoryRepository categoryRepository;
     CategoryMapper categoryMapper;
+    HistoryService historyService;
 
     @PreAuthorize("hasRole('ACCESS_CATEGORY')")
     public List<CategoryResponse> getCategories(){
@@ -77,7 +78,11 @@ public class CategoryService {
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
         Category category = categoryMapper.toCategory(categoryRequest);
         category.setStatus(1);
-        return categoryMapper.toCategoryResponse(categoryRepository.save(category));
+
+        categoryRepository.save(category);
+        historyService.createHistory("Created category: "+category.getCategory_name()+" : "+category.getCategory_id());
+
+        return categoryMapper.toCategoryResponse(category);
     }
 
     @PreAuthorize("hasRole('UPDATE_CATEGORY')")
@@ -87,7 +92,11 @@ public class CategoryService {
                 .orElseThrow(() -> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
 
         categoryMapper.updateCategory(category, categoryRequest);
-        return categoryMapper.toCategoryResponse(categoryRepository.save(category));
+
+        categoryRepository.save(category);
+        historyService.createHistory("Update category: "+category.getCategory_name()+" : "+category.getCategory_id());
+
+        return categoryMapper.toCategoryResponse(category);
     }
 
     @PreAuthorize("hasRole('CHANGE_CATEGORY_STATUS')")
@@ -105,7 +114,11 @@ public class CategoryService {
         } else {
             category.setStatus(1);
         }
-        return categoryMapper.toCategoryResponse(categoryRepository.save(category));
+
+        categoryRepository.save(category);
+        historyService.createHistory("Changed status category: "+category.getCategory_name()+" : "+category.getCategory_id());
+        
+        return categoryMapper.toCategoryResponse(category);
     }
 
 
@@ -122,7 +135,11 @@ public class CategoryService {
         );
         // hiển thị lại tour
         category.setStatus(1);
-        return categoryMapper.toCategoryResponse(categoryRepository.save(category));
+
+        categoryRepository.save(category);
+        historyService.createHistory("Undo category: "+category.getCategory_name()+" : "+category.getCategory_id());
+
+        return categoryMapper.toCategoryResponse(category);
     }
 
 
@@ -140,6 +157,10 @@ public class CategoryService {
         );
         // ẩn danh mục đó
         category.setStatus(0);
-        return categoryMapper.toCategoryResponse(categoryRepository.save(category));
+
+        categoryRepository.save(category);
+        historyService.createHistory("Deleted category: "+category.getCategory_name()+" : "+category.getCategory_id());
+
+        return categoryMapper.toCategoryResponse(category);
     }
 }
