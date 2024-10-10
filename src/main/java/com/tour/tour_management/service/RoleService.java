@@ -32,6 +32,7 @@ public class RoleService {
     RoleRepository roleRepository;
     RoleMapper roleMapper;
     PermissionRepository permissionRepository;
+    HistoryService historyService;
 
     @PreAuthorize("hasRole('ACCESS_ROLE')")
     public List<RoleResponse> getRoles () {
@@ -88,7 +89,11 @@ public class RoleService {
         role.setRole_name(roleRequest.getRole_name());
         role.setPermissions(permissionSet);
         role.setStatus(1);
-        return roleMapper.toRoleResponse(roleRepository.save(role));
+
+        roleRepository.save(role);
+        historyService.createHistory("Created role: "+role.getRole_name()+" : "+role.getRole_id());
+
+        return roleMapper.toRoleResponse(role);
     }
 
     @PreAuthorize("hasRole('UPDATE_ROLE')")
@@ -104,7 +109,11 @@ public class RoleService {
         role.setRole_name(roleRequest.getRole_name());
         role.setPermissions(permissionSet);
 
-        return roleMapper.toRoleResponse(roleRepository.save(role));
+
+        roleRepository.save(role);
+        historyService.createHistory("Updated role: "+role.getRole_name()+" : "+role.getRole_id());
+
+        return roleMapper.toRoleResponse(role);
     }
 
     @PreAuthorize("hasRole('CHANGE_ROLE_STATUS')")
@@ -122,6 +131,10 @@ public class RoleService {
         } else {
           role.setStatus(1);
         }
-        return roleMapper.toRoleResponse(roleRepository.save(role));
+
+        roleRepository.save(role);
+        historyService.createHistory("Changed status role: "+role.getRole_name()+" : "+role.getRole_id());
+        
+        return roleMapper.toRoleResponse(role);
     }
 }

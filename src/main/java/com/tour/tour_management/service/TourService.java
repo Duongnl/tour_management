@@ -117,8 +117,7 @@ public class TourService {
             if (tourTimeRequest.getReturn_airline_id() != null) {
                 Airline airline = null;
                 airline = airlineRepository.findById(tourTimeRequest.getReturn_airline_id()).orElseThrow(
-                        () -> new AppException(TourErrorCode.TOUR_NOT_FOUND)
-                );
+                        () -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
                 tourTime.setReturnAirline(airline);
             } else {
                 tourTime.setReturnAirline(null);
@@ -126,8 +125,7 @@ public class TourService {
             if (tourTimeRequest.getDeparture_airline_id() != null) {
                 Airline airline = null;
                 airline = airlineRepository.findById(tourTimeRequest.getDeparture_airline_id()).orElseThrow(
-                        () -> new AppException(TourErrorCode.TOUR_NOT_FOUND)
-                );
+                        () -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
                 tourTime.setDepartureAirline(airline);
             } else {
                 tourTime.setDepartureAirline(null);
@@ -136,18 +134,17 @@ public class TourService {
             tourTimes.add(tourTime);
         });
         tour.setTourTimes(tourTimes);
-        Tour tourSaved =tourRepository.save(tour);
-        historyService.createHistory(new HistoryRequest("Create-tour " + tourSaved.getTour_id()));
+
+        tourRepository.save(tour);
+        historyService.createHistory("Created tour: " + tour.getTour_name() + " : " + tour.getTour_id());
+
         return tourMapper.toTourDetailResponse((tourSorted(tour)));
     }
-
 
     public Tour tourSorted(@NotNull Tour tour) {
         tour.setTourTimes(
                 tourTimeRepository.findAllOrderedByTourId(
-                        tour.getTour_id()
-                )
-        );
+                        tour.getTour_id()));
         return tour;
     }
 
@@ -164,18 +161,15 @@ public class TourService {
         if (tourTimeRequest.getReturn_airline_id() != null) {
             Airline airline = null;
             airline = airlineRepository.findById(tourTimeRequest.getReturn_airline_id()).orElseThrow(
-                    () -> new AppException(TourErrorCode.TOUR_NOT_FOUND)
-            );
+                    () -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
             tourTime.setReturnAirline(airline);
         } else {
             tourTime.setReturnAirline(null);
         }
 
         if (tourTimeRequest.getDeparture_airline_id() != null) {
-            Airline airline = null;
-            airline = airlineRepository.findById(tourTimeRequest.getDeparture_airline_id()).orElseThrow(
-                    () -> new AppException(TourErrorCode.TOUR_NOT_FOUND)
-            );
+            Airline airline = airlineRepository.findById(tourTimeRequest.getDeparture_airline_id()).orElseThrow(
+                    () -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
             tourTime.setDepartureAirline(airline);
         } else {
             tourTime.setDepartureAirline(null);
@@ -183,9 +177,12 @@ public class TourService {
 
         tourTimeRepository.save(tourTime);
         tour.getTourTimes().add(tourTime);
-        Tour tourSaved=tourRepository.save(tour);
-        historyService.createHistory(new HistoryRequest("Create tour time: tour "+tour_id+" tour time " + tourTime.getTour_time_id()));
-        return tourMapper.toTourDetailResponse(tourSaved);
+
+        tourRepository.save(tour);
+        historyService.createHistory("Created tour time: " + tour.getTour_name() + " : " + tour.getTour_id() + " : "
+                + tourTime.getTime_name() + " : " + tourTime.getTour_time_id());
+
+        return tourMapper.toTourDetailResponse(tour);
     }
 
     @PreAuthorize("hasRole('UPDATE_TOUR')")
@@ -193,22 +190,23 @@ public class TourService {
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
 
+        TourTime tourTimeFound = new TourTime();
 
-        Set<TourTime> tourTimes = tour.getTourTimes();
-
-        AtomicBoolean tourTimeFound = new AtomicBoolean(false);
-        tourTimes.forEach(tourTime -> {
+        for (TourTime tourTime : tour.getTourTimes()) {
             if (tourTime.getTour_time_id() == tour_time_id) {
                 tourTime.setTour(tour);
                 tourMapper.updateTourTime(tourTime, tourTimeRequest);
-                tourTimeFound.set(true);
+                tourTimeFound = tourTime;
                 tourTimeRepository.save(tourTime);
+                break;
             }
-        });
-        if (!tourTimeFound.get()) {
+        }
+        if (tourTimeFound.getTour_time_id() != tour_time_id) {
             throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
         }
-        historyService.createHistory(new HistoryRequest("Update tour time: tour  "+tour_id+" tour_time "+tour_time_id));
+
+        historyService.createHistory("Created tour time: " + tour.getTour_name() + " : " + tour.getTour_id() + " : "
+                + tourTimeFound.getTime_name() + " : " + tourTimeFound.getTour_time_id());
         return tourMapper.toTourDetailResponse(tour);
     }
 
@@ -221,9 +219,10 @@ public class TourService {
                 .orElseThrow(() -> new AppException(CategoryErrorCode.CATEGORY_NOT_FOUND));
         tourMapper.updateTour(tour, tourUpdateRequest);
         tour.setCategory(category);
-        Tour tourSaved=tourRepository.save(tour);
-        historyService.createHistory(new HistoryRequest("Update tour "+tour_id));
-        return tourMapper.toTourDetailResponse(tourSorted(tourSaved));
+
+        tourRepository.save(tour);
+        historyService.createHistory("Updated tour: " + tour.getTour_name() + " : " + tour.getTour_id());
+        return tourMapper.toTourDetailResponse((tourSorted(tour)));
     }
 
     @PreAuthorize("hasRole('CHANGE_TOUR_STATUS')")
@@ -236,36 +235,37 @@ public class TourService {
         } else {
             tour.setStatus(0);
         }
-        Tour tourSaved=tourRepository.save(tour);
-        historyService.createHistory(new HistoryRequest("change status tour  "+tourSaved.getTour_id()));
+        Tour tourSaved = tourRepository.save(tour);
+        historyService.createHistory("Changed status tour: " + tour.getTour_name() + " : " + tour.getTour_id());
         return tourMapper.toTourDetailResponse(tourSorted(tour));
 
     }
 
     @PreAuthorize("hasRole('CHANGE_TOUR_STATUS')")
-    public TourDetailResponse changeStatusTourTime(Integer tour_id, Integer tourtime_id) {
+    public TourDetailResponse changeStatusTourTime(int tour_id, int tour_time_id) {
         Tour tour = tourRepository.findById(tour_id)
                 .orElseThrow(() -> new AppException(TourErrorCode.TOUR_NOT_FOUND));
 
-        Set<TourTime> tourTimes = tour.getTourTimes();
+        TourTime tourTimeFound = new TourTime();
 
-        AtomicBoolean tourTimeFound = new AtomicBoolean(false);
-        tourTimes.forEach(tourTime -> {
-            if (tourTime.getTour_time_id().equals(tourtime_id)) {
+        for (TourTime tourTime : tour.getTourTimes()) {
+            if (tourTime.getTour_time_id() == tour_time_id) {
                 tourTime.setTour(tour);
                 if (tourTime.getStatus() == 0) {
                     tourTime.setStatus(1);
                 } else {
                     tourTime.setStatus(0);
                 }
-                tourTimeFound.set(true);
+                tourTimeFound = tourTime;
                 tourTimeRepository.save(tourTime);
+                break;
             }
-        });
-        if (!tourTimeFound.get()) {
+        }
+        if (tourTimeFound.getTour_time_id() != tour_time_id) {
             throw new AppException(TourTimeErrorCode.TIME_NOT_FOUND);
         }
-        historyService.createHistory(new HistoryRequest("Change status tour time  "+tour_id+" tour_time_id "+tourtime_id));
+        historyService.createHistory("Changed status tour time: " + tour.getTour_name() + " : " + tour.getTour_id()
+                + " : " + tourTimeFound.getTime_name() + " : " + tourTimeFound.getTour_time_id());
         return tourMapper.toTourDetailResponse(tourSorted(tour));
 
     }
