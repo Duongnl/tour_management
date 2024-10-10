@@ -1,17 +1,12 @@
 package com.tour.tour_management.repository;
 
-import com.tour.tour_management.entity.Account;
-import com.tour.tour_management.entity.History;
-import com.tour.tour_management.entity.Employee;
 import com.tour.tour_management.entity.History;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Repository

@@ -1,6 +1,5 @@
 package com.tour.tour_management.repository;
 
-import com.tour.tour_management.entity.Customer;
 import com.tour.tour_management.entity.Tour;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,9 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 //String boi vi kieu du lieu cua customer_id la integer

@@ -1,11 +1,8 @@
 package com.tour.tour_management.exception;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-
-import java.time.LocalDateTime;
 
 @Getter
 public enum AirlineErrorCode implements ErrorCode {
