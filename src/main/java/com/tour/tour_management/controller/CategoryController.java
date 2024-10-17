@@ -68,7 +68,7 @@ public class CategoryController {
     }
 
     @PutMapping("/change-status/{category_id}")
-    public ApiResponse<CategoryResponse> changeStatusRole (@PathVariable String category_id) {
+    public ApiResponse<CategoryResponse> changeStatusCategory (@PathVariable String category_id) {
         return ApiResponse.<CategoryResponse>builder()
                 .result(categoryService.changeCategoryStatus(category_id))
                 .build();
