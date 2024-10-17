@@ -165,7 +165,7 @@ public class CustomerService {
         customer.setCustomer_name(customer.getCustomer_name());
         customerRepository.save(customer);
         
-        historyService.createHistory("Create customer: "+customer.getCustomer_name()+" : "+customer.getCustomer_id());
+        historyService.createHistory("Created customer: "+customer.getCustomer_name()+" : "+customer.getCustomer_id());
 
         return customerMapper.toCustomerDetailResponse(customer);
     }
@@ -201,7 +201,7 @@ public class CustomerService {
 
         customerMapper.updateCustomer(customer, customerRequest);
         customerRepository.save(customer);
-        historyService.createHistory("Update customer: "+customer.getCustomer_name()+" : "+customer.getCustomer_id());
+        historyService.createHistory("Updated customer: "+customer.getCustomer_name()+" : "+customer.getCustomer_id());
         return customerMapper.toCustomerDetailResponse(customer);
     }
 
