@@ -94,7 +94,7 @@ public class CategoryService {
         categoryMapper.updateCategory(category, categoryRequest);
 
         categoryRepository.save(category);
-        historyService.createHistory("Update category: "+category.getCategory_name()+" : "+category.getCategory_id());
+        historyService.createHistory("Updated category: "+category.getCategory_name()+" : "+category.getCategory_id());
 
         return categoryMapper.toCategoryResponse(category);
     }
